@@ -14,12 +14,6 @@ export interface MessageTypeFilter {
     allowedPatterns?: string[];
     blockedPatterns?: string[];
   };
-  audioProcessing?: {
-    autoDownload?: boolean;
-    maxSizeBytes?: number;
-    oversizeMessage?: string;
-    replyToOversizeAudio?: boolean;
-  };
   audioDurationFilter?: {
     enabled?: boolean;
     minDurationSeconds?: number;
@@ -369,12 +363,6 @@ export const defaultMessageFilter: MessageTypeFilter = {
   messageTypes: ['audioMessage', 'conversation'],
   textFilters: {
     allowedPatterns: ['^[/\\\\]'] // Textos começando com / ou \
-  },
-  audioProcessing: {
-    autoDownload: true,
-    maxSizeBytes: 25165824, // 24MB
-    oversizeMessage: 'Áudio acima do limite do sistema',
-    replyToOversizeAudio: false // Configurado via variável de ambiente global
   },
   audioDurationFilter: {
     enabled: true, // Habilitado por padrão

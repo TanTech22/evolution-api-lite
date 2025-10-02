@@ -3581,10 +3581,6 @@ export class BaileysStartupService extends ChannelStartupService {
           filters.textFilters = webhookConfig.textFilters as any;
         }
 
-        // Log de deprecação para audioProcessing
-        if (webhookConfig.audioProcessing) {
-          this.logger.warn(`[DEPRECATED] audioProcessing in webhook is deprecated. Use /instance/filters/audio/ instead.`);
-        }
       }
 
       // Busca configurações de filtro de duração por instância

@@ -414,7 +414,6 @@ export class InstanceController {
           // messageTypes: sourceDbInstance.Webhook.messageTypes as string[],
           // excludeMessageTypes: sourceDbInstance.Webhook.excludeMessageTypes as string[],
           // textFilters: sourceDbInstance.Webhook.textFilters,
-          // audioProcessing: sourceDbInstance.Webhook.audioProcessing,
         } : undefined,
         websocket: sourceDbInstance.Websocket ? {
           enabled: sourceDbInstance.Websocket.enabled,
@@ -422,7 +421,6 @@ export class InstanceController {
           // messageTypes: sourceDbInstance.Websocket.messageTypes as string[],
           // excludeMessageTypes: sourceDbInstance.Websocket.excludeMessageTypes as string[],
           // textFilters: sourceDbInstance.Websocket.textFilters,
-          // audioProcessing: sourceDbInstance.Websocket.audioProcessing,
         } : undefined,
         rabbitmq: sourceDbInstance.Rabbitmq ? {
           enabled: sourceDbInstance.Rabbitmq.enabled,
@@ -430,7 +428,6 @@ export class InstanceController {
           // messageTypes: sourceDbInstance.Rabbitmq.messageTypes as string[],
           // excludeMessageTypes: sourceDbInstance.Rabbitmq.excludeMessageTypes as string[],
           // textFilters: sourceDbInstance.Rabbitmq.textFilters,
-          // audioProcessing: sourceDbInstance.Rabbitmq.audioProcessing,
         } : undefined,
         sqs: sourceDbInstance.Sqs ? {
           enabled: sourceDbInstance.Sqs.enabled,
@@ -438,7 +435,6 @@ export class InstanceController {
           // messageTypes: sourceDbInstance.Sqs.messageTypes as string[],
           // excludeMessageTypes: sourceDbInstance.Sqs.excludeMessageTypes as string[],
           // textFilters: sourceDbInstance.Sqs.textFilters,
-          // audioProcessing: sourceDbInstance.Sqs.audioProcessing,
         } : undefined,
         pusher: sourceDbInstance.Pusher ? {
           enabled: sourceDbInstance.Pusher.enabled,
@@ -451,7 +447,6 @@ export class InstanceController {
           // messageTypes: sourceDbInstance.Pusher.messageTypes as string[],
           // excludeMessageTypes: sourceDbInstance.Pusher.excludeMessageTypes as string[],
           // textFilters: sourceDbInstance.Pusher.textFilters,
-          // audioProcessing: sourceDbInstance.Pusher.audioProcessing,
         } : undefined,
       };
 
@@ -664,7 +659,6 @@ export class InstanceController {
           messageTypes: dbInstance.Webhook.messageTypes || [],
           excludeMessageTypes: dbInstance.Webhook.excludeMessageTypes || [],
           textFilters: dbInstance.Webhook.textFilters || {},
-          audioProcessing: dbInstance.Webhook.audioProcessing || {}
         } : null,
         websocket: dbInstance.Websocket ? {
           enabled: dbInstance.Websocket.enabled,
@@ -672,7 +666,6 @@ export class InstanceController {
           // messageTypes: dbInstance.Websocket.messageTypes || [],
           // excludeMessageTypes: dbInstance.Websocket.excludeMessageTypes || [],
           // textFilters: dbInstance.Websocket.textFilters || {},
-          // audioProcessing: dbInstance.Websocket.audioProcessing || {}
         } : null,
         // ... outros tipos de integração
       };

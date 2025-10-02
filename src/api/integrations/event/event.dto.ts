@@ -17,12 +17,6 @@ export class EventDto {
       allowedPatterns?: string[];
       blockedPatterns?: string[];
     };
-    audioProcessing?: {
-      autoDownload?: boolean;
-      maxSizeBytes?: number;
-      oversizeMessage?: string;
-      replyToOversizeAudio?: boolean;
-    };
   };
 
   websocket?: {
@@ -35,12 +29,6 @@ export class EventDto {
       blockedWords?: string[];
       allowedPatterns?: string[];
       blockedPatterns?: string[];
-    };
-    audioProcessing?: {
-      autoDownload?: boolean;
-      maxSizeBytes?: number;
-      oversizeMessage?: string;
-      replyToOversizeAudio?: boolean;
     };
   };
 
@@ -55,12 +43,6 @@ export class EventDto {
       allowedPatterns?: string[];
       blockedPatterns?: string[];
     };
-    audioProcessing?: {
-      autoDownload?: boolean;
-      maxSizeBytes?: number;
-      oversizeMessage?: string;
-      replyToOversizeAudio?: boolean;
-    };
   };
 
   rabbitmq?: {
@@ -73,12 +55,6 @@ export class EventDto {
       blockedWords?: string[];
       allowedPatterns?: string[];
       blockedPatterns?: string[];
-    };
-    audioProcessing?: {
-      autoDownload?: boolean;
-      maxSizeBytes?: number;
-      oversizeMessage?: string;
-      replyToOversizeAudio?: boolean;
     };
   };
 
@@ -97,12 +73,6 @@ export class EventDto {
       blockedWords?: string[];
       allowedPatterns?: string[];
       blockedPatterns?: string[];
-    };
-    audioProcessing?: {
-      autoDownload?: boolean;
-      maxSizeBytes?: number;
-      oversizeMessage?: string;
-      replyToOversizeAudio?: boolean;
     };
   };
 }
@@ -124,12 +94,6 @@ export function EventInstanceMixin<TBase extends Constructor>(Base: TBase) {
         allowedPatterns?: string[];
         blockedPatterns?: string[];
       };
-      audioProcessing?: {
-        autoDownload?: boolean;
-        maxSizeBytes?: number;
-        oversizeMessage?: string;
-        replyToOversizeAudio?: boolean;
-      };
     };
 
     websocket?: {
@@ -142,12 +106,6 @@ export function EventInstanceMixin<TBase extends Constructor>(Base: TBase) {
         blockedWords?: string[];
         allowedPatterns?: string[];
         blockedPatterns?: string[];
-      };
-      audioProcessing?: {
-        autoDownload?: boolean;
-        maxSizeBytes?: number;
-        oversizeMessage?: string;
-        replyToOversizeAudio?: boolean;
       };
     };
 
@@ -162,12 +120,6 @@ export function EventInstanceMixin<TBase extends Constructor>(Base: TBase) {
         allowedPatterns?: string[];
         blockedPatterns?: string[];
       };
-      audioProcessing?: {
-        autoDownload?: boolean;
-        maxSizeBytes?: number;
-        oversizeMessage?: string;
-        replyToOversizeAudio?: boolean;
-      };
     };
 
     rabbitmq?: {
@@ -180,12 +132,6 @@ export function EventInstanceMixin<TBase extends Constructor>(Base: TBase) {
         blockedWords?: string[];
         allowedPatterns?: string[];
         blockedPatterns?: string[];
-      };
-      audioProcessing?: {
-        autoDownload?: boolean;
-        maxSizeBytes?: number;
-        oversizeMessage?: string;
-        replyToOversizeAudio?: boolean;
       };
     };
 
@@ -204,12 +150,6 @@ export function EventInstanceMixin<TBase extends Constructor>(Base: TBase) {
         blockedWords?: string[];
         allowedPatterns?: string[];
         blockedPatterns?: string[];
-      };
-      audioProcessing?: {
-        autoDownload?: boolean;
-        maxSizeBytes?: number;
-        oversizeMessage?: string;
-        replyToOversizeAudio?: boolean;
       };
     };
   };

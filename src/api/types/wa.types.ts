@@ -101,7 +101,6 @@ export declare namespace wa {
     messageTypes?: JsonValue;
     excludeMessageTypes?: JsonValue;
     textFilters?: JsonValue;
-    audioProcessing?: JsonValue;
   };
 
   export type LocalPusher = LocalEvent & {

@@ -102,28 +102,6 @@ export const webhookSchema: JSONSchema7 = {
             }
           }
         },
-        audioProcessing: {
-          type: 'object',
-          properties: {
-            autoDownload: {
-              type: 'boolean',
-              description: 'Download automático de áudios'
-            },
-            maxSizeBytes: {
-              type: 'number',
-              minimum: 0,
-              description: 'Tamanho máximo do áudio em bytes'
-            },
-            oversizeMessage: {
-              type: 'string',
-              description: 'Mensagem enviada quando áudio excede o tamanho'
-            },
-            replyToOversizeAudio: {
-              type: 'boolean',
-              description: 'Enviar resposta automática para áudios grandes'
-            }
-          }
-        }
       },
       required: ['enabled', 'url'],
       ...isNotEmpty('enabled', 'url'),
