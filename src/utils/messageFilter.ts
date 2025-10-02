@@ -210,23 +210,15 @@ function applyTypeFilter(messageType: string, filters: MessageTypeFilter): Filte
  * Aplica filtro de áudio por tamanho
  */
 function applyAudioFilter(audioSize: number, filters: MessageTypeFilter, remoteJid?: string): FilterResult {
-  const audioConfig = filters.audioProcessing;
-  if (!audioConfig) return { allowed: true };
+  // FILTRO GLOBAL FIXO - 24MB sempre
+  const GLOBAL_MAX_SIZE_BYTES = 25165824; // 24MB
 
-  const maxSize = audioConfig.maxSizeBytes || 25165824; // 24MB default
-
-  if (audioSize > maxSize) {
-    // Obter configuração global para verificar configurações de reação
-    const globalConfig = configService.get<any>('AUDIO_FILTER');
-    const shouldReply = globalConfig?.REPLY_TO_OVERSIZE || false;
-    const reaction = globalConfig?.OVERSIZE_REACTION || '⛔';
-    const message = globalConfig?.OVERSIZE_MESSAGE || 'Áudio acima do limite do sistema';
-
+  if (audioSize > GLOBAL_MAX_SIZE_BYTES) {
     return {
       allowed: false,
-      reason: `Audio size ${audioSize} bytes exceeds limit ${maxSize} bytes`,
-      shouldReplyToOversizeAudio: shouldReply,
-      oversizeMessage: message,
+      reason: `Audio size ${audioSize} bytes exceeds global limit ${GLOBAL_MAX_SIZE_BYTES} bytes`,
+      shouldReplyToOversizeAudio: true,
+      oversizeMessage: '⛔', // Reaction fixa global
       remoteJid
     };
   }
