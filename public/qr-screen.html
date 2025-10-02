@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Scanner - Evolution API</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .instance-info {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+
+        .instance-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .instance-id {
+            font-size: 0.9rem;
+            color: #666;
+            font-family: monospace;
+        }
+
+        .qr-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .qr-code {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .loading {
+            display: none;
+            color: #667eea;
+            font-size: 1.1rem;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .status-connecting {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .status-connected {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .refresh-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+
+        .countdown {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.7);
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .instructions {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .instructions h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        .error-message {
+            display: none;
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 20px rgba(102, 126, 234, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
+            }
+        }
+
+        .pairing-code {
+            background: #e8f5e8;
+            border: 2px solid #4caf50;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .pairing-code h3 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .pairing-number {
+            font-size: 2rem;
+            font-weight: bold;
+            font-family: monospace;
+            color: #1b5e20;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            letter-spacing: 3px;
+        }
+
+        .pairing-code p {
+            color: #2e7d32;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 QR Code Scanner</h1>
+            <p>Escaneie o código QR com seu WhatsApp</p>
+        </div>
+
+        <div class="instance-info">
+            <div class="instance-name" id="instanceName">5511934593575</div>
+            <div class="instance-id" id="instanceId">Carregando...</div>
+        </div>
+
+        <div id="status" class="status status-connecting">
+            🔄 Conectando... Aguardando leitura do QR Code
+        </div>
+
+        <div class="error-message" id="errorMessage">
+            <strong>Erro:</strong> Não foi possível carregar o QR Code. Verifique se a instância está ativa.
+        </div>
+
+        <div class="qr-container pulse" id="qrContainer">
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                Carregando QR Code...
+            </div>
+            <img id="qrCode" class="qr-code" style="display: none;" alt="QR Code WhatsApp">
+        </div>
+
+        <div class="pairing-code" id="pairingCode" style="display: none;">
+            <h3>📱 Código de Pareamento</h3>
+            <div class="pairing-number" id="pairingNumber"></div>
+            <p>Digite este código no seu WhatsApp em <strong>Dispositivos vinculados > Vincular com código</strong></p>
+        </div>
+
+        <div class="refresh-info">
+            🔄 Código válido por <span class="countdown" id="countdown">10</span> segundos
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-primary" onclick="loadQRCode()">🔄 Atualizar QR Code</button>
+            <a href="/dashboard" class="btn btn-secondary">📊 Ver Dashboard</a>
+        </div>
+
+        <div class="instructions">
+            <h3>📋 Como conectar:</h3>
+            <ol>
+                <li>Abra o WhatsApp no seu celular</li>
+                <li>Toque em <strong>Mais opções</strong> (⋮) > <strong>Dispositivos vinculados</strong></li>
+                <li>Toque em <strong>Vincular um dispositivo</strong></li>
+                <li>Aponte a câmera do celular para este QR Code</li>
+                <li>Se o QR Code expirar, clique em <strong>"🔄 Atualizar QR Code"</strong></li>
+                <li>Aguarde a confirmação da conexão</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // Pegar instância da URL ou usar padrão
+        const urlParams = new URLSearchParams(window.location.search);
+        const INSTANCE_NAME = urlParams.get('instance') || '5511930670388';
+        const PHONE_NUMBER = INSTANCE_NAME;
+        const REFRESH_INTERVAL = 10000; // 10 segundos
+        const STATUS_CHECK_INTERVAL = 3000; // 3 segundos para verificar status
+
+        let countdownTimer;
+        let refreshTimer;
+        let currentCountdown = 10;
+
+        async function fetchInstanceInfo() {
+            try {
+                // Usando dados da instância atual
+                console.log('Carregando informações da instância atual:', INSTANCE_NAME);
+
+                const currentInstance = {
+                    name: INSTANCE_NAME,
+                    id: INSTANCE_NAME,
+                    connectionStatus: 'connecting'
+                };
+
+                document.getElementById('instanceName').textContent = currentInstance.name;
+                document.getElementById('instanceId').textContent = `ID: ${currentInstance.id}`;
+                updateStatus(currentInstance.connectionStatus);
+                return currentInstance;
+
+                /* CÓDIGO ORIGINAL COMENTADO
+                const response = await fetch('/instance/fetchInstances');
+                if (!response.ok) throw new Error('Failed to fetch instances');
+                const instances = await response.json();
+
+                const instance = instances.find(i => i.name === INSTANCE_NAME);
+                if (instance) {
+                    document.getElementById('instanceName').textContent = instance.name;
+                    document.getElementById('instanceId').textContent = `ID: ${instance.id}`;
+                    updateStatus(instance.connectionStatus);
+                    return instance;
+                }
+                throw new Error('Instance not found');
+                */
+            } catch (error) {
+                console.error('Error fetching instance info:', error);
+                return null;
+            }
+        }
+
+        async function fetchQRCode() {
+            try {
+                // QR CODE REAL da Evolution API / Meta WhatsApp
+                console.log('Buscando QR Code real da Evolution API...');
+
+                const response = await fetch(`/instance/connect/${INSTANCE_NAME}?number=${PHONE_NUMBER}`, {
+                    headers: {
+                        'apikey': 'BQYHJGJHJ',
+                        'Accept': 'application/json'
+                    }
+                });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                const data = await response.json();
+                console.log('QR Code API Response:', data);
+
+                // Handle new response structure
+                const responseData = data.response || data;
+
+                if (responseData.base64) {
+                    console.log('✅ QR Code real recebido da Meta/WhatsApp');
+
+                    // Show pairingCode if available
+                    const pairingCodeEl = document.getElementById('pairingCode');
+                    const pairingNumberEl = document.getElementById('pairingNumber');
+
+                    if (responseData.pairingCode) {
+                        console.log('📱 Pairing Code disponível:', responseData.pairingCode);
+                        pairingNumberEl.textContent = responseData.pairingCode;
+                        pairingCodeEl.style.display = 'block';
+                    } else {
+                        pairingCodeEl.style.display = 'none';
+                    }
+
+                    return responseData.base64;
+                } else if (data.message) {
+                    throw new Error(data.message);
+                } else {
+                    throw new Error('QR Code not available in response');
+                }
+            } catch (error) {
+                console.error('Error fetching QR code:', error);
+                throw error;
+            }
+        }
+
+        function updateStatus(connectionStatus) {
+            const statusEl = document.getElementById('status');
+            const qrContainer = document.getElementById('qrContainer');
+
+            statusEl.className = 'status';
+            qrContainer.classList.remove('pulse');
+
+            switch (connectionStatus) {
+                case 'open':
+                    statusEl.className += ' status-connected';
+                    statusEl.innerHTML = '✅ Conectado com sucesso!';
+                    // Parar refresh quando conectado
+                    if (refreshTimer) {
+                        clearInterval(refreshTimer);
+                        clearInterval(countdownTimer);
+                    }
+                    document.querySelector('.refresh-info').style.display = 'none';
+                    break;
+                case 'connecting':
+                    statusEl.className += ' status-connecting';
+                    statusEl.innerHTML = '🔄 Conectando... Aguardando leitura do QR Code';
+                    qrContainer.classList.add('pulse');
+                    break;
+                case 'close':
+                default:
+                    statusEl.className += ' status-error';
+                    statusEl.innerHTML = '❌ Desconectado. Escaneie o QR Code para conectar';
+                    qrContainer.classList.add('pulse');
+                    break;
+            }
+        }
+
+        async function loadQRCode() {
+            const loadingEl = document.getElementById('loading');
+            const qrCodeEl = document.getElementById('qrCode');
+            const errorEl = document.getElementById('errorMessage');
+
+            // Parar timer anterior se existir
+            if (countdownTimer) {
+                clearInterval(countdownTimer);
+            }
+
+            // Resetar botão e interface
+            resetRefreshButton();
+
+            // Mostrar loading
+            loadingEl.style.display = 'block';
+            qrCodeEl.style.display = 'none';
+            errorEl.style.display = 'none';
+
+            try {
+                // Buscar informações da instância
+                await fetchInstanceInfo();
+
+                // Buscar QR Code
+                const qrCodeBase64 = await fetchQRCode();
+
+                // Mostrar QR Code
+                qrCodeEl.src = qrCodeBase64;
+                qrCodeEl.style.display = 'block';
+                loadingEl.style.display = 'none';
+
+                console.log('QR Code carregado com sucesso');
+
+                // Reiniciar contador de expiração
+                currentCountdown = 10;
+                updateCountdown();
+
+                // Restaurar mensagem de countdown
+                const refreshInfo = document.querySelector('.refresh-info');
+                refreshInfo.innerHTML = '🔄 Código válido por <span class="countdown" id="countdown">10</span> segundos';
+                refreshInfo.style.color = '#666';
+                refreshInfo.style.fontWeight = 'normal';
+
+            } catch (error) {
+                console.error('Erro ao carregar QR Code:', error);
+                loadingEl.style.display = 'none';
+                errorEl.style.display = 'block';
+                errorEl.innerHTML = `<strong>Erro:</strong> ${error.message}`;
+            }
+        }
+
+        function updateCountdown() {
+            document.getElementById('countdown').textContent = currentCountdown;
+        }
+
+        function startRefreshCycle() {
+            // Mostrar informações de countdown
+            document.querySelector('.refresh-info').style.display = 'flex';
+
+            // Countdown timer (atualiza a cada segundo)
+            countdownTimer = setInterval(() => {
+                currentCountdown--;
+                updateCountdown();
+
+                if (currentCountdown <= 0) {
+                    // QR Code expirou - mostrar aviso e parar timer
+                    clearInterval(countdownTimer);
+                    showExpiredMessage();
+                }
+            }, 1000);
+
+            // NÃO faz refresh automático - apenas avisa que expirou
+        }
+
+        function showExpiredMessage() {
+            const statusEl = document.getElementById('status');
+            const refreshInfo = document.querySelector('.refresh-info');
+            const refreshBtn = document.querySelector('.btn-primary');
+            const qrContainer = document.getElementById('qrContainer');
+
+            // Mostrar que o QR expirou
+            statusEl.className = 'status status-error';
+            statusEl.innerHTML = '⏰ QR Code expirado! Clique em "Atualizar QR Code" para gerar um novo';
+
+            // Destacar o botão de refresh
+            refreshBtn.style.background = '#ff6b6b';
+            refreshBtn.style.transform = 'scale(1.05)';
+            refreshBtn.style.boxShadow = '0 0 20px rgba(255, 107, 107, 0.5)';
+            refreshBtn.innerHTML = '🔄 GERAR NOVO QR CODE';
+
+            // Escurecer o QR code
+            qrContainer.style.opacity = '0.4';
+            qrContainer.style.filter = 'grayscale(100%)';
+
+            // Mostrar mensagem de expiração
+            refreshInfo.innerHTML = '⏰ <strong>QR Code expirado!</strong> Clique no botão vermelho para gerar um novo';
+            refreshInfo.style.color = '#ff6b6b';
+            refreshInfo.style.fontWeight = 'bold';
+        }
+
+        function resetRefreshButton() {
+            const refreshBtn = document.querySelector('.btn-primary');
+            const qrContainer = document.getElementById('qrContainer');
+
+            // Restaurar botão normal
+            refreshBtn.style.background = '#667eea';
+            refreshBtn.style.transform = 'scale(1)';
+            refreshBtn.style.boxShadow = 'none';
+            refreshBtn.innerHTML = '🔄 Atualizar QR Code';
+
+            // Restaurar QR code
+            qrContainer.style.opacity = '1';
+            qrContainer.style.filter = 'none';
+        }
+
+        // Remover addEventListener duplicado - já foi movido para o final
+
+        // Verificação de status da conexão a cada 3 segundos
+        let statusCheckTimer;
+
+        function startStatusMonitoring() {
+            statusCheckTimer = setInterval(async () => {
+                try {
+                    const response = await fetch(`/instance/fetchInstances`);
+                    if (response.ok) {
+                        const instances = await response.json();
+                        const currentInstance = instances.find(i => i.name === INSTANCE_NAME);
+
+                        if (currentInstance) {
+                            const previousStatus = document.getElementById('status').className;
+                            updateStatus(currentInstance.connectionStatus);
+
+                            // Se mudou para conectado, parar o refresh
+                            if (currentInstance.connectionStatus === 'open') {
+                                if (refreshTimer) {
+                                    clearInterval(refreshTimer);
+                                }
+                                if (countdownTimer) {
+                                    clearInterval(countdownTimer);
+                                }
+                                clearInterval(statusCheckTimer);
+                            }
+
+                            // REMOVIDO: Não fazer refresh automático ao desconectar
+                            // Deixar que o usuário faça o refresh manual
+                        }
+                    }
+                } catch (error) {
+                    console.error('Erro ao verificar status:', error);
+                }
+            }, STATUS_CHECK_INTERVAL);
+        }
+
+        // WebSocket para atualizações em tempo real
+        let socket;
+
+        function connectWebSocket() {
+            try {
+                socket = new WebSocket(`ws://localhost:8080/ws/${INSTANCE_NAME}`);
+
+                socket.onopen = function(event) {
+                    console.log('🔌 WebSocket conectado para receber atualizações em tempo real');
+                };
+
+                socket.onmessage = function(event) {
+                    try {
+                        const data = JSON.parse(event.data);
+                        console.log('📨 WebSocket recebido:', data);
+
+                        // Atualizar quando receber evento de QR code
+                        if (data.event === 'qrcode.updated' && data.instance === INSTANCE_NAME) {
+                            console.log('🔄 QR Code atualizado via WebSocket - atualizando interface');
+                            const qrData = data.data?.qrcode;
+
+                            if (qrData?.base64) {
+                                updateQRDisplay(qrData.base64, qrData.pairingCode, qrData);
+                                resetCountdown();
+                            }
+                        }
+
+                        // Atualizar quando status de conexão mudar
+                        if (data.event === 'connection.update' && data.instance === INSTANCE_NAME) {
+                            console.log('📱 Status de conexão atualizado via WebSocket');
+                            updateConnectionStatus(data.data?.state || 'disconnected');
+                        }
+                    } catch (error) {
+                        console.error('Erro ao processar mensagem WebSocket:', error);
+                    }
+                };
+
+                socket.onclose = function(event) {
+                    console.log('🔌 WebSocket desconectado - tentando reconectar em 5s...');
+                    setTimeout(connectWebSocket, 5000);
+                };
+
+                socket.onerror = function(error) {
+                    console.error('❌ Erro no WebSocket:', error);
+                };
+            } catch (error) {
+                console.error('❌ Erro ao conectar WebSocket:', error);
+                setTimeout(connectWebSocket, 5000);
+            }
+        }
+
+        function updateQRDisplay(base64Data, pairingCode, instanceData) {
+            const qrCodeEl = document.getElementById('qrCode');
+            const loadingEl = document.getElementById('loading');
+            const pairingCodeEl = document.getElementById('pairingCode');
+            const pairingNumberEl = document.getElementById('pairingNumber');
+            const instanceNameEl = document.getElementById('instanceName');
+            const instanceIdEl = document.getElementById('instanceId');
+
+            if (qrCodeEl && base64Data) {
+                qrCodeEl.src = base64Data;
+                qrCodeEl.style.display = 'block';
+                loadingEl.style.display = 'none';
+
+                // Atualizar informações da instância se fornecidas
+                if (instanceData) {
+                    if (instanceNameEl) instanceNameEl.textContent = instanceData.instance || INSTANCE_NAME;
+                    if (instanceIdEl) instanceIdEl.textContent = `ID: ${instanceData.instance || INSTANCE_NAME}`;
+                }
+
+                // Mostrar pairing code se disponível
+                if (pairingCode) {
+                    pairingNumberEl.textContent = pairingCode;
+                    pairingCodeEl.style.display = 'block';
+                } else {
+                    pairingCodeEl.style.display = 'none';
+                }
+
+                console.log('✅ QR Code atualizado via WebSocket');
+            }
+        }
+
+        function updateConnectionStatus(status) {
+            const statusEl = document.getElementById('connectionStatus');
+            const statusTextEl = document.getElementById('statusText');
+
+            if (statusEl && statusTextEl) {
+                statusTextEl.textContent = status === 'open' ? 'Conectado' :
+                                          status === 'connecting' ? 'Conectando...' : 'Desconectado';
+
+                statusEl.className = `status ${status === 'open' ? 'connected' :
+                                           status === 'connecting' ? 'connecting' : 'disconnected'}`;
+            }
+        }
+
+        // Iniciar monitoramento quando a página carregar
+        document.addEventListener('DOMContentLoaded', () => {
+            // REMOVIDO: loadQRCode(); - Não chamar automaticamente
+            // REMOVIDO: startRefreshCycle(); - Não iniciar timers automaticamente
+            // REMOVIDO: startStatusMonitoring(); - Não buscar status automaticamente
+            // REMOVIDO: connectWebSocket(); - Não conectar automaticamente
+
+            // Apenas mostrar interface sem fazer chamadas
+            console.log('QR Screen carregado - clique em "Atualizar QR Code" para conectar');
+        });
+    </script>
+</body>
+</html>

@@ -98,6 +98,10 @@ export declare namespace wa {
     headers?: JsonValue;
     webhookByEvents?: boolean;
     webhookBase64?: boolean;
+    messageTypes?: JsonValue;
+    excludeMessageTypes?: JsonValue;
+    textFilters?: JsonValue;
+    audioProcessing?: JsonValue;
   };
 
   export type LocalPusher = LocalEvent & {

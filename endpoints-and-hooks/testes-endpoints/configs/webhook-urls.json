@@ -1,0 +1,39 @@
+{
+  "webhook_urls": {
+    "principal": {
+      "url": "http://195.35.17.156:3000/webhook/principal",
+      "description": "Webhook principal para receber eventos da Evolution API",
+      "events": ["MESSAGES_UPSERT", "CONNECTION_UPDATE", "QRCODE_UPDATED"]
+    },
+    "monitoramento": {
+      "url": "http://195.35.17.156:3000/webhook/monitor",
+      "description": "Webhook de monitoramento para métricas e alertas",
+      "events": ["INSTANCE_CREATE", "INSTANCE_DELETE", "ERRORS"]
+    },
+    "teste_externo": {
+      "url": "https://webhook.site/unique-id-aqui",
+      "description": "Webhook externo para testes (webhook.site)",
+      "events": ["ALL"]
+    },
+    "local_test": {
+      "url": "http://195.35.17.156:3000/webhook/test",
+      "description": "Endpoint local para testes rápidos",
+      "events": ["ALL"]
+    }
+  },
+  "configuracao_global": {
+    "principal": {
+      "enabled": true,
+      "url": "http://195.35.17.156:3000/webhook/principal"
+    },
+    "monitoramento": {
+      "enabled": true,
+      "url": "http://195.35.17.156:3000/webhook/monitor"
+    }
+  },
+  "comandos_configuracao": {
+    "configurar_webhook_global": "curl -X POST \"http://195.35.17.156:8080/webhook/global/config\" -H \"Content-Type: application/json\" -H \"apikey: BQYHJGJHJ\" -d '{\"principal\":{\"enabled\":true,\"url\":\"http://195.35.17.156:3000/webhook/principal\"},\"monitoramento\":{\"enabled\":true,\"url\":\"http://195.35.17.156:3000/webhook/monitor\"}}'",
+    "testar_webhook": "curl -X POST \"http://195.35.17.156:8080/webhook/global/test\" -H \"Content-Type: application/json\" -H \"apikey: BQYHJGJHJ\" -d '{\"url\":\"http://195.35.17.156:3000/webhook/test\",\"type\":\"principal\"}'",
+    "verificar_configuracao": "curl -X GET \"http://195.35.17.156:8080/webhook/global/config\" -H \"apikey: BQYHJGJHJ\""
+  }
+}

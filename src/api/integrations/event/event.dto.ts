@@ -9,21 +9,77 @@ export class EventDto {
     headers?: JsonValue;
     byEvents?: boolean;
     base64?: boolean;
+    messageTypes?: string[];
+    excludeMessageTypes?: string[];
+    textFilters?: {
+      allowedWords?: string[];
+      blockedWords?: string[];
+      allowedPatterns?: string[];
+      blockedPatterns?: string[];
+    };
+    audioProcessing?: {
+      autoDownload?: boolean;
+      maxSizeBytes?: number;
+      oversizeMessage?: string;
+      replyToOversizeAudio?: boolean;
+    };
   };
 
   websocket?: {
     enabled?: boolean;
     events?: string[];
+    messageTypes?: string[];
+    excludeMessageTypes?: string[];
+    textFilters?: {
+      allowedWords?: string[];
+      blockedWords?: string[];
+      allowedPatterns?: string[];
+      blockedPatterns?: string[];
+    };
+    audioProcessing?: {
+      autoDownload?: boolean;
+      maxSizeBytes?: number;
+      oversizeMessage?: string;
+      replyToOversizeAudio?: boolean;
+    };
   };
 
   sqs?: {
     enabled?: boolean;
     events?: string[];
+    messageTypes?: string[];
+    excludeMessageTypes?: string[];
+    textFilters?: {
+      allowedWords?: string[];
+      blockedWords?: string[];
+      allowedPatterns?: string[];
+      blockedPatterns?: string[];
+    };
+    audioProcessing?: {
+      autoDownload?: boolean;
+      maxSizeBytes?: number;
+      oversizeMessage?: string;
+      replyToOversizeAudio?: boolean;
+    };
   };
 
   rabbitmq?: {
     enabled?: boolean;
     events?: string[];
+    messageTypes?: string[];
+    excludeMessageTypes?: string[];
+    textFilters?: {
+      allowedWords?: string[];
+      blockedWords?: string[];
+      allowedPatterns?: string[];
+      blockedPatterns?: string[];
+    };
+    audioProcessing?: {
+      autoDownload?: boolean;
+      maxSizeBytes?: number;
+      oversizeMessage?: string;
+      replyToOversizeAudio?: boolean;
+    };
   };
 
   pusher?: {
@@ -34,6 +90,20 @@ export class EventDto {
     cluster?: string;
     useTLS?: boolean;
     events?: string[];
+    messageTypes?: string[];
+    excludeMessageTypes?: string[];
+    textFilters?: {
+      allowedWords?: string[];
+      blockedWords?: string[];
+      allowedPatterns?: string[];
+      blockedPatterns?: string[];
+    };
+    audioProcessing?: {
+      autoDownload?: boolean;
+      maxSizeBytes?: number;
+      oversizeMessage?: string;
+      replyToOversizeAudio?: boolean;
+    };
   };
 }
 
@@ -46,21 +116,77 @@ export function EventInstanceMixin<TBase extends Constructor>(Base: TBase) {
       url?: string;
       byEvents?: boolean;
       base64?: boolean;
+      messageTypes?: string[];
+      excludeMessageTypes?: string[];
+      textFilters?: {
+        allowedWords?: string[];
+        blockedWords?: string[];
+        allowedPatterns?: string[];
+        blockedPatterns?: string[];
+      };
+      audioProcessing?: {
+        autoDownload?: boolean;
+        maxSizeBytes?: number;
+        oversizeMessage?: string;
+        replyToOversizeAudio?: boolean;
+      };
     };
 
     websocket?: {
       enabled?: boolean;
       events?: string[];
+      messageTypes?: string[];
+      excludeMessageTypes?: string[];
+      textFilters?: {
+        allowedWords?: string[];
+        blockedWords?: string[];
+        allowedPatterns?: string[];
+        blockedPatterns?: string[];
+      };
+      audioProcessing?: {
+        autoDownload?: boolean;
+        maxSizeBytes?: number;
+        oversizeMessage?: string;
+        replyToOversizeAudio?: boolean;
+      };
     };
 
     sqs?: {
       enabled?: boolean;
       events?: string[];
+      messageTypes?: string[];
+      excludeMessageTypes?: string[];
+      textFilters?: {
+        allowedWords?: string[];
+        blockedWords?: string[];
+        allowedPatterns?: string[];
+        blockedPatterns?: string[];
+      };
+      audioProcessing?: {
+        autoDownload?: boolean;
+        maxSizeBytes?: number;
+        oversizeMessage?: string;
+        replyToOversizeAudio?: boolean;
+      };
     };
 
     rabbitmq?: {
       enabled?: boolean;
       events?: string[];
+      messageTypes?: string[];
+      excludeMessageTypes?: string[];
+      textFilters?: {
+        allowedWords?: string[];
+        blockedWords?: string[];
+        allowedPatterns?: string[];
+        blockedPatterns?: string[];
+      };
+      audioProcessing?: {
+        autoDownload?: boolean;
+        maxSizeBytes?: number;
+        oversizeMessage?: string;
+        replyToOversizeAudio?: boolean;
+      };
     };
 
     pusher?: {
@@ -71,6 +197,20 @@ export function EventInstanceMixin<TBase extends Constructor>(Base: TBase) {
       cluster?: string;
       useTLS?: boolean;
       events?: string[];
+      messageTypes?: string[];
+      excludeMessageTypes?: string[];
+      textFilters?: {
+        allowedWords?: string[];
+        blockedWords?: string[];
+        allowedPatterns?: string[];
+        blockedPatterns?: string[];
+      };
+      audioProcessing?: {
+        autoDownload?: boolean;
+        maxSizeBytes?: number;
+        oversizeMessage?: string;
+        replyToOversizeAudio?: boolean;
+      };
     };
   };
 }

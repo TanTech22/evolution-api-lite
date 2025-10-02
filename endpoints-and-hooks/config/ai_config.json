@@ -1,0 +1,38 @@
+{
+  "_comment": "anthropic: Request has been disabled in constructor_optimized_fixed.py",
+  "anthropic": {
+    "api_key": "YOUR_ANTHROPIC_API_KEY",
+    "model": "claude-3-5-sonnet-20241022", 
+    "model_options": "claude-sonnet-4-20250514 | claude-3-5-sonnet-20241022",
+    "max_tokens": 4000,
+    "temperature_phase1": 0.1,
+    "temperature_phase23": 0.2
+  },
+  "openai": {
+    "api_key": "YOUR_OPENAI_API_KEY",
+    "model": "gpt-4o-mini",
+    "_model_options": "o1-mini | o1-preview | gpt-4o | gpt-4o-mini | gpt-4-turbo | gpt-4.1-mini | gpt-3.5-turbo",
+    "max_tokens": 4000,
+    "temperature_phase1": 0.1,
+    "temperature_phase23": 0.5
+  },
+  "current_provider": "openai",
+  "cache_enabled": true,
+  "cache_ttl_seconds": 3600,
+  "debug_mode": false,
+  "rate_limiting": {
+    "requests_per_minute": 60,
+    "enabled": true
+  },
+  "scoring": {
+    "name_weight": 0.4,
+    "summary_weight": 0.35,
+    "keywords_weight": 0.25,
+    "minimum_threshold": 0.2
+  },
+  "hybrid_strategy": {
+    "textual_confidence_threshold": 0.50,
+    "description": "Se score textual >= threshold, aceita resultado. Senão, usa IA para resolver dúvida",
+    "enabled": true
+  }
+}

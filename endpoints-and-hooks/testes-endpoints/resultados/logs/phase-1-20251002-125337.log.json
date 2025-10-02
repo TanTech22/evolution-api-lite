@@ -1,0 +1,11 @@
+{
+  "phase": 1,
+  "name": "Testes Básicos",
+  "server_url": "http://195.35.17.156:8080",
+  "timestamp": "2025-10-02T12:53:40+00:00",
+  "total_tests": 3,
+  "passed_tests": 0,
+  "failed_tests": 3,
+  "success_rate": 0,
+  "status": "FAILED"
+}

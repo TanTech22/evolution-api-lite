@@ -1,0 +1,53 @@
+{
+  "timestamp": "2025-10-01T05:11:15.743Z",
+  "summary": {
+    "passed": 2,
+    "failed": 1,
+    "totalTime": 56
+  },
+  "results": [
+    {
+      "test": "API Health Check",
+      "success": true,
+      "duration": 37,
+      "details": {
+        "instanceCount": 2,
+        "status": 200
+      }
+    },
+    {
+      "test": "Infrastructure Check",
+      "success": true,
+      "duration": 7,
+      "details": {
+        "minio": true,
+        "queueStats": {
+          "status": "SUCCESS",
+          "error": false,
+          "response": {
+            "enabled": true,
+            "tokenBucket": {
+              "tokens": 500,
+              "capacity": 500,
+              "refillRate": "500/min",
+              "lastRefill": 1759295475728
+            },
+            "config": {
+              "rateLimit": 500,
+              "rateInterval": 60000,
+              "capacity": 500,
+              "refillRate": 500
+            },
+            "timestamp": "2025-10-01T05:11:15.728Z"
+          }
+        }
+      }
+    },
+    {
+      "test": "Audio Filter Configuration",
+      "success": false,
+      "duration": 12,
+      "error": "Request failed with status code 404"
+    }
+  ]
+}

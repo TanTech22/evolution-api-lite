@@ -2,7 +2,7 @@ import { RouterBroker } from '@api/abstract/abstract.router';
 import { InstanceDto, SetPresenceDto } from '@api/dto/instance.dto';
 import { instanceController } from '@api/server.module';
 import { ConfigService } from '@config/env.config';
-import { instanceSchema, presenceOnlySchema } from '@validate/validate.schema';
+import { instanceSchema, presenceOnlySchema, audioFilterSchema } from '@validate/validate.schema';
 import { RequestHandler, Router } from 'express';
 
 import { HttpStatus } from './index.router';
@@ -93,6 +93,90 @@ export class InstanceRouter extends RouterBroker {
           schema: null,
           ClassRef: InstanceDto,
           execute: (instance) => instanceController.deleteInstance(instance),
+        });
+
+        return res.status(HttpStatus.OK).json(response);
+      })
+      .post(this.routerPath('duplicate'), ...guards, async (req, res) => {
+        const { sourceInstanceName, newInstanceName } = req.body;
+
+        if (!sourceInstanceName || !newInstanceName) {
+          return res.status(HttpStatus.BAD_REQUEST).json({
+            status: 'ERROR',
+            error: true,
+            response: { message: 'sourceInstanceName and newInstanceName are required' }
+          });
+        }
+
+        const response = await instanceController.duplicateInstance(sourceInstanceName, newInstanceName);
+        return res.status(HttpStatus.CREATED).json(response);
+      })
+      .get(this.routerPath('metrics'), ...guards, async (req, res) => {
+        const response = await this.dataValidate<InstanceDto>({
+          request: req,
+          schema: null,
+          ClassRef: InstanceDto,
+          execute: (instance) => instanceController.getInstanceMetrics(instance),
+        });
+
+        return res.status(HttpStatus.OK).json(response);
+      })
+      .put(this.routerPath('filters'), ...guards, async (req, res) => {
+        const response = await this.dataValidate<InstanceDto>({
+          request: req,
+          schema: null,
+          ClassRef: InstanceDto,
+          execute: (instance) => instanceController.updateInstanceFilters(instance, req.body),
+        });
+
+        return res.status(HttpStatus.OK).json(response);
+      })
+      .get(this.routerPath('filters'), ...guards, async (req, res) => {
+        const response = await this.dataValidate<InstanceDto>({
+          request: req,
+          schema: null,
+          ClassRef: InstanceDto,
+          execute: (instance) => instanceController.getInstanceFilters(instance),
+        });
+
+        return res.status(HttpStatus.OK).json(response);
+      })
+      .get(this.routerPath('filters/audio'), ...guards, async (req, res) => {
+        const response = await this.dataValidate<InstanceDto>({
+          request: req,
+          schema: null,
+          ClassRef: InstanceDto,
+          execute: (instance) => instanceController.getAudioFilters(instance),
+        });
+
+        return res.status(HttpStatus.OK).json(response);
+      })
+      .put(this.routerPath('filters/audio'), ...guards, async (req, res) => {
+        const response = await this.dataValidate<InstanceDto>({
+          request: req,
+          schema: audioFilterSchema,
+          ClassRef: InstanceDto,
+          execute: (instance) => instanceController.updateAudioFilters(instance, req.body),
+        });
+
+        return res.status(HttpStatus.OK).json(response);
+      })
+      .get(this.routerPath('filters/audio/stats'), ...guards, async (req, res) => {
+        const response = await this.dataValidate<InstanceDto>({
+          request: req,
+          schema: null,
+          ClassRef: InstanceDto,
+          execute: (instance) => instanceController.getAudioFilterStats(instance),
+        });
+
+        return res.status(HttpStatus.OK).json(response);
+      })
+      .post(this.routerPath('filters/audio/stats/reset'), ...guards, async (req, res) => {
+        const response = await this.dataValidate<InstanceDto>({
+          request: req,
+          schema: null,
+          ClassRef: InstanceDto,
+          execute: (instance) => instanceController.resetAudioFilterStats(instance),
         });
 
         return res.status(HttpStatus.OK).json(response);

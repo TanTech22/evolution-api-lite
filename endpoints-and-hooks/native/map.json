@@ -1,0 +1,1156 @@
+{
+  "API Status": {
+    "description": "Verificação do status geral da API",
+    "endpoints": [
+      {
+        "name": "Status da API",
+        "summary": "Verifica se a API está funcionando e retorna informações básicas",
+        "purpose": "Validar conectividade e obter versão/documentação da API",
+        "inputs": "Nenhum parâmetro necessário",
+        "outputs": "Status, mensagem, versão, URLs do swagger/manager/documentação",
+        "location": {
+          "request": {
+            "startLine": 5,
+            "endLine": 7
+          },
+          "response": {
+            "startLine": 9,
+            "endLine": 17
+          }
+        }
+      }
+    ]
+  },
+  "Settings Controller": {
+    "description": "Gerenciamento de configurações da instância",
+    "endpoints": [
+      {
+        "name": "Configurar Instância",
+        "summary": "Define configurações de comportamento da instância WhatsApp",
+        "purpose": "Configurar rejeição de chamadas, ignorar grupos, status online, leitura de mensagens",
+        "inputs": "Configurações booleanas para chamadas, grupos, online, leitura de mensagens e histórico",
+        "outputs": "Nome da instância e configurações aplicadas com status de cada configuração",
+        "location": {
+          "request": {
+            "startLine": 21,
+            "endLine": 32
+          },
+          "response": {
+            "startLine": 34,
+            "endLine": 46
+          }
+        }
+      },
+      {
+        "name": "Buscar Configurações",
+        "summary": "Recupera as configurações atuais da instância",
+        "purpose": "Consultar configurações ativas da instância para validação ou auditoria",
+        "inputs": "Apenas instanceName na URL e apikey no header",
+        "outputs": "Configurações atuais da instância em formato booleano",
+        "location": {
+          "request": {
+            "startLine": 48,
+            "endLine": 51
+          },
+          "response": {
+            "startLine": 53,
+            "endLine": 61
+          }
+        }
+      }
+    ]
+  },
+  "Message Controller": {
+    "description": "Envio de mensagens e conteúdo via WhatsApp",
+    "endpoints": [
+      {
+        "name": "Enviar Texto",
+        "summary": "Envia mensagem de texto simples ou com formatação",
+        "purpose": "Comunicação textual com suporte a menções, citações e preview de links",
+        "inputs": "Número de destino, texto, configurações de delay, menções, citações e preview",
+        "outputs": "Chave da mensagem, conteúdo enviado, timestamp e status de envio",
+        "location": {
+          "request": {
+            "startLine": 67,
+            "endLine": 86
+          },
+          "response": {
+            "startLine": 88,
+            "endLine": 101
+          }
+        }
+      },
+      {
+        "name": "Enviar Status",
+        "summary": "Publica status/story no WhatsApp",
+        "purpose": "Compartilhar conteúdo temporário visível para contatos por 24h",
+        "inputs": "Tipo de conteúdo, texto/mídia, configurações visuais, lista de destinatários",
+        "outputs": "Chave do status, conteúdo publicado com formatação e timestamp",
+        "location": {
+          "request": {
+            "startLine": 105,
+            "endLine": 117
+          },
+          "response": {
+            "startLine": 119,
+            "endLine": 135
+          }
+        }
+      },
+      {
+        "name": "Enviar Mídia",
+        "summary": "Envia arquivos de mídia (imagem, vídeo, documento)",
+        "purpose": "Compartilhar conteúdo multimídia com legendas e configurações avançadas",
+        "inputs": "Número, tipo de mídia, arquivo codificado, legenda, configurações de envio",
+        "outputs": "Detalhes completos da mídia enviada incluindo URLs, dimensões e metadados",
+        "location": {
+          "request": {
+            "startLine": 139,
+            "endLine": 162
+          },
+          "response": {
+            "startLine": 164,
+            "endLine": 189
+          }
+        }
+      },
+      {
+        "name": "Enviar Áudio",
+        "summary": "Envia mensagens de voz/áudio",
+        "purpose": "Comunicação por áudio com suporte a PTT (Push-to-Talk)",
+        "inputs": "Número de destino, arquivo de áudio, configurações de envio e menções",
+        "outputs": "Metadados completos do áudio incluindo duração, chaves de criptografia e URLs",
+        "location": {
+          "request": {
+            "startLine": 193,
+            "endLine": 212
+          },
+          "response": {
+            "startLine": 214,
+            "endLine": 236
+          }
+        }
+      },
+      {
+        "name": "Enviar Sticker",
+        "summary": "Envia figurinhas/adesivos",
+        "purpose": "Comunicação visual através de stickers personalizados ou padrão",
+        "inputs": "Número de destino, arquivo do sticker, configurações de envio",
+        "outputs": "Confirmação de envio do sticker",
+        "location": {
+          "request": {
+            "startLine": 240,
+            "endLine": 259
+          },
+          "response": {
+            "startLine": 260,
+            "endLine": 260
+          }
+        }
+      },
+      {
+        "name": "Enviar Localização",
+        "summary": "Compartilha localização geográfica",
+        "purpose": "Enviar coordenadas GPS com nome e endereço do local",
+        "inputs": "Número, nome do local, endereço, coordenadas de latitude e longitude",
+        "outputs": "Dados da localização enviada com coordenadas precisas e informações do local",
+        "location": {
+          "request": {
+            "startLine": 262,
+            "endLine": 285
+          },
+          "response": {
+            "startLine": 287,
+            "endLine": 304
+          }
+        }
+      },
+      {
+        "name": "Enviar Contato",
+        "summary": "Compartilha informações de contato",
+        "purpose": "Enviar cartão de visita digital com dados pessoais ou comerciais",
+        "inputs": "Número de destino e array com dados do contato (nome, telefone, email, organização)",
+        "outputs": "Cartão de contato formatado em vCard com todas as informações",
+        "location": {
+          "request": {
+            "startLine": 308,
+            "endLine": 322
+          },
+          "response": {
+            "startLine": 324,
+            "endLine": 339
+          }
+        }
+      },
+      {
+        "name": "Enviar Reação",
+        "summary": "Adiciona reação emoji a mensagens",
+        "purpose": "Resposta rápida através de emojis em mensagens específicas",
+        "inputs": "Chave da mensagem original e emoji da reação",
+        "outputs": "Confirmação da reação enviada com timestamp e referência da mensagem",
+        "location": {
+          "request": {
+            "startLine": 343,
+            "endLine": 352
+          },
+          "response": {
+            "startLine": 354,
+            "endLine": 373
+          }
+        }
+      },
+      {
+        "name": "Enviar Enquete",
+        "summary": "Cria enquetes/pesquisas com múltiplas opções",
+        "purpose": "Coleta de opinião através de votação com opções personalizadas",
+        "inputs": "Número, nome da enquete, opções de resposta, número de seleções permitidas",
+        "outputs": "Enquete criada com todas as opções e configurações de votação",
+        "location": {
+          "request": {
+            "startLine": 377,
+            "endLine": 400
+          },
+          "response": {
+            "startLine": 402,
+            "endLine": 430
+          }
+        }
+      },
+      {
+        "name": "Enviar Lista",
+        "summary": "Envia lista interativa com múltiplas seções",
+        "purpose": "Apresentar opções organizadas em formato de menu estruturado",
+        "inputs": "Número, título, descrição, texto do botão, seções com itens e descrições",
+        "outputs": "Lista estruturada com seções e opções selecionáveis",
+        "location": {
+          "request": {
+            "startLine": 434,
+            "endLine": 468
+          },
+          "response": {
+            "startLine": 470,
+            "endLine": 498
+          }
+        }
+      },
+      {
+        "name": "Enviar Botões",
+        "summary": "Cria mensagem com botões interativos",
+        "purpose": "Interface de usuário com botões para respostas rápidas e ações",
+        "inputs": "Número, título, descrição, rodapé, array de botões com texto e identificadores",
+        "outputs": "Mensagem com botões interativos configurados",
+        "location": {
+          "request": {
+            "startLine": 502,
+            "endLine": 530
+          },
+          "response": {
+            "startLine": 532,
+            "endLine": 560
+          }
+        }
+      }
+    ]
+  },
+  "Chat Controller": {
+    "description": "Gerenciamento de conversas, contatos e perfis",
+    "endpoints": [
+      {
+        "name": "Verificar Números WhatsApp",
+        "summary": "Valida se números possuem conta WhatsApp ativa",
+        "purpose": "Verificar existência de contas antes de enviar mensagens",
+        "inputs": "Array de números de telefone para verificação",
+        "outputs": "Status de existência, JID e número formatado para cada telefone",
+        "location": {
+          "request": {
+            "startLine": 566,
+            "endLine": 570
+          },
+          "response": {
+            "startLine": 572,
+            "endLine": 578
+          }
+        }
+      },
+      {
+        "name": "Marcar como Lida",
+        "summary": "Marca mensagens específicas como lidas",
+        "purpose": "Gerenciar status de leitura de mensagens recebidas",
+        "inputs": "Array de chaves de mensagens para marcar como lidas",
+        "outputs": "Confirmação de sucesso na marcação de leitura",
+        "location": {
+          "request": {
+            "startLine": 582,
+            "endLine": 592
+          },
+          "response": {
+            "startLine": 594,
+            "endLine": 598
+          }
+        }
+      },
+      {
+        "name": "Marcar Chat como Não Lido",
+        "summary": "Define conversa como não lida",
+        "purpose": "Reverter status de leitura para destacar conversas importantes",
+        "inputs": "Última mensagem da conversa e identificador do chat",
+        "outputs": "Confirmação de alteração do status de leitura",
+        "location": {
+          "request": {
+            "startLine": 602,
+            "endLine": 612
+          },
+          "response": {
+            "startLine": 614,
+            "endLine": 618
+          }
+        }
+      },
+      {
+        "name": "Arquivar Chat",
+        "summary": "Move conversa para pasta de arquivados",
+        "purpose": "Organizar conversas removendo-as da lista principal sem deletar",
+        "inputs": "Última mensagem, status de arquivamento e identificador do chat",
+        "outputs": "Confirmação com ID do chat e status de arquivamento",
+        "location": {
+          "request": {
+            "startLine": 622,
+            "endLine": 634
+          },
+          "response": {
+            "startLine": 636,
+            "endLine": 640
+          }
+        }
+      },
+      {
+        "name": "Apagar Mensagem",
+        "summary": "Remove mensagem para todos os participantes",
+        "purpose": "Deletar mensagem enviada por engano ou conteúdo inadequado",
+        "inputs": "ID da mensagem, JID remoto, indicador de origem e participante",
+        "outputs": "Mensagem de protocolo confirmando revogação com timestamp",
+        "location": {
+          "request": {
+            "startLine": 644,
+            "endLine": 650
+          },
+          "response": {
+            "startLine": 652,
+            "endLine": 669
+          }
+        }
+      },
+      {
+        "name": "Atualizar Mensagem",
+        "summary": "Edita conteúdo de mensagem já enviada",
+        "purpose": "Corrigir ou modificar texto de mensagens após envio",
+        "inputs": "Número, novo texto e chave da mensagem original",
+        "outputs": "Confirmação da atualização",
+        "location": {
+          "request": {
+            "startLine": 673,
+            "endLine": 684
+          },
+          "response": {
+            "startLine": 685,
+            "endLine": 685
+          }
+        }
+      },
+      {
+        "name": "Enviar Presença",
+        "summary": "Define status de atividade (digitando, online, etc.)",
+        "purpose": "Mostrar indicadores de atividade para outros usuários",
+        "inputs": "Número e opções de presença (tipo, delay, número específico)",
+        "outputs": "Confirmação de envio da presença",
+        "location": {
+          "request": {
+            "startLine": 689,
+            "endLine": 697
+          },
+          "response": {
+            "startLine": 698,
+            "endLine": 698
+          }
+        }
+      },
+      {
+        "name": "Status de Bloqueio",
+        "summary": "Bloqueia ou desbloqueia contatos",
+        "purpose": "Gerenciar lista de contatos bloqueados para privacidade",
+        "inputs": "Número do contato e status de bloqueio desejado",
+        "outputs": "Confirmação da alteração do status",
+        "location": {
+          "request": {
+            "startLine": 702,
+            "endLine": 707
+          },
+          "response": {
+            "startLine": 708,
+            "endLine": 708
+          }
+        }
+      },
+      {
+        "name": "Buscar Foto de Perfil",
+        "summary": "Obtém URL da foto de perfil de contatos",
+        "purpose": "Acessar imagens de perfil para interfaces ou validação",
+        "inputs": "Número do contato para buscar foto",
+        "outputs": "WUID e URL da foto de perfil em alta resolução",
+        "location": {
+          "request": {
+            "startLine": 712,
+            "endLine": 717
+          },
+          "response": {
+            "startLine": 719,
+            "endLine": 723
+          }
+        }
+      },
+      {
+        "name": "Obter Base64 de Mídia",
+        "summary": "Converte mídia de mensagens para Base64",
+        "purpose": "Extrair e processar conteúdo multimídia das mensagens",
+        "inputs": "Chave da mensagem com mídia e opção de conversão para MP4",
+        "outputs": "Conteúdo da mídia codificado em Base64",
+        "location": {
+          "request": {
+            "startLine": 727,
+            "endLine": 737
+          },
+          "response": {
+            "startLine": 738,
+            "endLine": 738
+          }
+        }
+      },
+      {
+        "name": "Buscar Contatos",
+        "summary": "Consulta informações de contatos salvos",
+        "purpose": "Recuperar dados de contatos para listagem ou validação",
+        "inputs": "Critérios de busca com identificador do contato",
+        "outputs": "Informações detalhadas dos contatos encontrados",
+        "location": {
+          "request": {
+            "startLine": 827,
+            "endLine": 837
+          }
+        }
+      },
+      {
+        "name": "Buscar Mensagens",
+        "summary": "Pesquisa mensagens por critérios específicos",
+        "purpose": "Localizar mensagens históricas para análise ou referência",
+        "inputs": "Critérios de busca incluindo JID remoto para filtrar conversas",
+        "outputs": "Mensagens que correspondem aos critérios especificados",
+        "location": {
+          "request": {
+            "startLine": 755,
+            "endLine": 763
+          },
+          "response": {
+            "startLine": 764,
+            "endLine": 764
+          }
+        }
+      },
+      {
+        "name": "Buscar Mensagens de Status",
+        "summary": "Consulta stories/status publicados",
+        "purpose": "Acessar histórico de status para monitoramento ou análise",
+        "inputs": "Critérios de busca com IDs, JID remoto e limite de resultados",
+        "outputs": "Stories e status que atendem aos filtros aplicados",
+        "location": {
+          "request": {
+            "startLine": 768,
+            "endLine": 778
+          },
+          "response": {
+            "startLine": 779,
+            "endLine": 779
+          }
+        }
+      },
+      {
+        "name": "Buscar Chats",
+        "summary": "Lista todas as conversas ativas",
+        "purpose": "Obter visão geral de todas as conversas para dashboard",
+        "inputs": "Apenas instanceName e apikey",
+        "outputs": "Lista completa de chats com informações básicas",
+        "location": {
+          "request": {
+            "startLine": 783,
+            "endLine": 786
+          },
+          "response": {
+            "startLine": 787,
+            "endLine": 787
+          }
+        }
+      },
+      {
+        "name": "Buscar Perfil Comercial",
+        "summary": "Obtém informações de Business Profile",
+        "purpose": "Acessar dados comerciais de empresas no WhatsApp Business",
+        "inputs": "Número da conta comercial",
+        "outputs": "Informações detalhadas do perfil comercial",
+        "location": {
+          "request": {
+            "startLine": 791,
+            "endLine": 796
+          },
+          "response": {
+            "startLine": 797,
+            "endLine": 797
+          }
+        }
+      },
+      {
+        "name": "Buscar Perfil",
+        "summary": "Consulta informações públicas de perfil",
+        "purpose": "Obter dados básicos de perfil de qualquer usuário",
+        "inputs": "Número do usuário para consulta",
+        "outputs": "Informações públicas disponíveis do perfil",
+        "location": {
+          "request": {
+            "startLine": 801,
+            "endLine": 806
+          },
+          "response": {
+            "startLine": 807,
+            "endLine": 807
+          }
+        }
+      },
+      {
+        "name": "Atualizar Nome do Perfil",
+        "summary": "Modifica o nome exibido no perfil",
+        "purpose": "Personalizar identidade visual da conta",
+        "inputs": "Novo nome para exibição no perfil",
+        "outputs": "Confirmação da alteração do nome",
+        "location": {
+          "request": {
+            "startLine": 811,
+            "endLine": 816
+          },
+          "response": {
+            "startLine": 817,
+            "endLine": 817
+          }
+        }
+      },
+      {
+        "name": "Atualizar Status do Perfil",
+        "summary": "Altera a frase de status/recado",
+        "purpose": "Personalizar mensagem de status visível para contatos",
+        "inputs": "Nova frase ou texto para o status",
+        "outputs": "Confirmação da atualização do status",
+        "location": {
+          "request": {
+            "startLine": 821,
+            "endLine": 826
+          },
+          "response": {
+            "startLine": 827,
+            "endLine": 827
+          }
+        }
+      },
+      {
+        "name": "Atualizar Foto do Perfil",
+        "summary": "Define nova imagem de perfil",
+        "purpose": "Personalizar avatar/foto de identificação da conta",
+        "inputs": "Imagem codificada para usar como foto de perfil",
+        "outputs": "Confirmação da alteração da foto",
+        "location": {
+          "request": {
+            "startLine": 831,
+            "endLine": 836
+          },
+          "response": {
+            "startLine": 837,
+            "endLine": 837
+          }
+        }
+      },
+      {
+        "name": "Remover Foto do Perfil",
+        "summary": "Exclui a imagem de perfil atual",
+        "purpose": "Voltar ao avatar padrão removendo foto personalizada",
+        "inputs": "Apenas instanceName e apikey",
+        "outputs": "Confirmação da remoção da foto",
+        "location": {
+          "request": {
+            "startLine": 841,
+            "endLine": 844
+          },
+          "response": {
+            "startLine": 845,
+            "endLine": 845
+          }
+        }
+      },
+      {
+        "name": "Buscar Configurações de Privacidade",
+        "summary": "Consulta configurações atuais de privacidade",
+        "purpose": "Verificar status das configurações de visibilidade e acesso",
+        "inputs": "Apenas instanceName e apikey",
+        "outputs": "Configurações atuais de privacidade da conta",
+        "location": {
+          "request": {
+            "startLine": 849,
+            "endLine": 852
+          },
+          "response": {
+            "startLine": 853,
+            "endLine": 853
+          }
+        }
+      },
+      {
+        "name": "Atualizar Configurações de Privacidade",
+        "summary": "Modifica configurações de visibilidade e acesso",
+        "purpose": "Controlar quem pode ver informações e adicionar aos grupos",
+        "inputs": "Configurações para recibos de leitura, perfil, status, online, última visualização e grupos",
+        "outputs": "Confirmação das alterações aplicadas",
+        "location": {
+          "request": {
+            "startLine": 857,
+            "endLine": 869
+          },
+          "response": {
+            "startLine": 870,
+            "endLine": 870
+          }
+        }
+      }
+    ]
+  },
+  "Group Controller": {
+    "description": "Administração e gerenciamento de grupos WhatsApp",
+    "endpoints": [
+      {
+        "name": "Criar Grupo",
+        "summary": "Cria novo grupo com participantes iniciais",
+        "purpose": "Estabelecer nova conversa em grupo com configurações básicas",
+        "inputs": "Assunto do grupo, descrição opcional e lista de participantes",
+        "outputs": "Confirmação da criação com dados do grupo",
+        "location": {
+          "request": {
+            "startLine": 974,
+            "endLine": 987
+          }
+        }
+      },
+      {
+        "name": "Atualizar Foto do Grupo",
+        "summary": "Define nova imagem de identificação do grupo",
+        "purpose": "Personalizar avatar visual do grupo",
+        "inputs": "Imagem codificada para usar como foto do grupo",
+        "outputs": "Confirmação da alteração da imagem",
+        "location": {
+          "request": {
+            "startLine": 889,
+            "endLine": 894
+          },
+          "response": {
+            "startLine": 895,
+            "endLine": 895
+          }
+        }
+      },
+      {
+        "name": "Atualizar Assunto do Grupo",
+        "summary": "Modifica o nome/título do grupo",
+        "purpose": "Renomear grupo para melhor identificação",
+        "inputs": "Novo assunto/nome para o grupo",
+        "outputs": "Confirmação da alteração do nome",
+        "location": {
+          "request": {
+            "startLine": 899,
+            "endLine": 904
+          },
+          "response": {
+            "startLine": 905,
+            "endLine": 905
+          }
+        }
+      },
+      {
+        "name": "Atualizar Descrição do Grupo",
+        "summary": "Altera a descrição informativa do grupo",
+        "purpose": "Definir propósito e regras do grupo",
+        "inputs": "Nova descrição explicativa do grupo",
+        "outputs": "Confirmação da atualização da descrição",
+        "location": {
+          "request": {
+            "startLine": 909,
+            "endLine": 914
+          },
+          "response": {
+            "startLine": 915,
+            "endLine": 915
+          }
+        }
+      },
+      {
+        "name": "Obter Código de Convite",
+        "summary": "Gera link de convite para o grupo",
+        "purpose": "Facilitar entrada de novos membros através de link",
+        "inputs": "Apenas instanceName e apikey",
+        "outputs": "URL de convite e código único do grupo",
+        "location": {
+          "request": {
+            "startLine": 919,
+            "endLine": 922
+          },
+          "response": {
+            "startLine": 924,
+            "endLine": 928
+          }
+        }
+      },
+      {
+        "name": "Revogar Código de Convite",
+        "summary": "Invalida link de convite atual",
+        "purpose": "Segurança ao invalidar links antigos e gerar novos",
+        "inputs": "Apenas instanceName e apikey",
+        "outputs": "Confirmação da revogação",
+        "location": {
+          "request": {
+            "startLine": 932,
+            "endLine": 935
+          },
+          "response": {
+            "startLine": 936,
+            "endLine": 936
+          }
+        }
+      },
+      {
+        "name": "Enviar Convite",
+        "summary": "Convida pessoas específicas para o grupo",
+        "purpose": "Adicionar membros enviando convite direto por WhatsApp",
+        "inputs": "JID do grupo, descrição do convite e números dos convidados",
+        "outputs": "Status de envio e URL do convite utilizado",
+        "location": {
+          "request": {
+            "startLine": 940,
+            "endLine": 950
+          },
+          "response": {
+            "startLine": 952,
+            "endLine": 956
+          }
+        }
+      },
+      {
+        "name": "Informações do Convite",
+        "summary": "Consulta dados de um link de convite",
+        "purpose": "Verificar informações antes de aceitar convite de grupo",
+        "inputs": "Link de convite para análise",
+        "outputs": "Dados públicos do grupo associado ao convite",
+        "location": {
+          "request": {
+            "startLine": 960,
+            "endLine": 963
+          },
+          "response": {
+            "startLine": 964,
+            "endLine": 964
+          }
+        }
+      },
+      {
+        "name": "Buscar Informações do Grupo",
+        "summary": "Obtém dados detalhados de um grupo específico",
+        "purpose": "Consultar configurações, participantes e metadados do grupo",
+        "inputs": "Identificador do grupo",
+        "outputs": "Informações completas incluindo participantes, configurações e histórico",
+        "location": {
+          "request": {
+            "startLine": 968,
+            "endLine": 971
+          },
+          "response": {
+            "startLine": 974,
+            "endLine": 995
+          }
+        }
+      },
+      {
+        "name": "Buscar Todos os Grupos",
+        "summary": "Lista todos os grupos da instância",
+        "purpose": "Obter visão geral de participação em grupos",
+        "inputs": "Apenas instanceName e apikey",
+        "outputs": "Array com informações básicas de todos os grupos",
+        "location": {
+          "request": {
+            "startLine": 1109,
+            "endLine": 1114
+          },
+          "response": {
+            "startLine": 1116,
+            "endLine": 1134
+          }
+        }
+      },
+      {
+        "name": "Listar Participantes",
+        "summary": "Consulta membros de um grupo específico",
+        "purpose": "Verificar lista atual de participantes e seus níveis de acesso",
+        "inputs": "Identificador do grupo",
+        "outputs": "Lista de participantes com IDs e status de administração",
+        "location": {
+          "request": {
+            "startLine": 1021,
+            "endLine": 1024
+          },
+          "response": {
+            "startLine": 1027,
+            "endLine": 1033
+          }
+        }
+      },
+      {
+        "name": "Atualizar Participante",
+        "summary": "Adiciona, remove ou promove membros do grupo",
+        "purpose": "Gerenciar participação e permissões de membros",
+        "inputs": "Ação desejada (add/remove/promote/demote) e lista de participantes",
+        "outputs": "Confirmação da ação executada",
+        "location": {
+          "request": {
+            "startLine": 1037,
+            "endLine": 1044
+          },
+          "response": {
+            "startLine": 1045,
+            "endLine": 1045
+          }
+        }
+      },
+      {
+        "name": "Atualizar Configurações",
+        "summary": "Modifica configurações de funcionamento do grupo",
+        "purpose": "Controlar quem pode enviar mensagens e fazer alterações",
+        "inputs": "Ação de configuração (announcement/not_announcement/locked/unlocked)",
+        "outputs": "Confirmação da aplicação das configurações",
+        "location": {
+          "request": {
+            "startLine": 1049,
+            "endLine": 1054
+          },
+          "response": {
+            "startLine": 1055,
+            "endLine": 1055
+          }
+        }
+      },
+      {
+        "name": "Ativar/Desativar Mensagens Temporárias",
+        "summary": "Configura tempo de expiração das mensagens",
+        "purpose": "Definir se mensagens desaparecem automaticamente após período",
+        "inputs": "Tempo de expiração em segundos (0 para desativar)",
+        "outputs": "Confirmação da configuração de mensagens temporárias",
+        "location": {
+          "request": {
+            "startLine": 1059,
+            "endLine": 1064
+          },
+          "response": {
+            "startLine": 1065,
+            "endLine": 1065
+          }
+        }
+      },
+      {
+        "name": "Sair do Grupo",
+        "summary": "Remove a instância de um grupo",
+        "purpose": "Deixar grupo quando não há mais interesse em participar",
+        "inputs": "Apenas instanceName e apikey",
+        "outputs": "Confirmação da saída do grupo",
+        "location": {
+          "request": {
+            "startLine": 1069,
+            "endLine": 1072
+          },
+          "response": {
+            "startLine": 1073,
+            "endLine": 1073
+          }
+        }
+      }
+    ]
+  },
+  "Evolution Bot": {
+    "description": "Sistema de chatbot automatizado integrado",
+    "endpoints": [
+      {
+        "name": "Criar Bot",
+        "summary": "Configura novo bot automatizado para a instância",
+        "purpose": "Automatizar respostas e interações baseadas em triggers configurados",
+        "inputs": "Configurações de ativação, URL da API, chaves, triggers, timeouts e comportamentos",
+        "outputs": "Confirmação da criação do bot",
+        "location": {
+          "request": {
+            "startLine": 1079,
+            "endLine": 1099
+          },
+          "response": {
+            "startLine": 1100,
+            "endLine": 1100
+          }
+        }
+      },
+      {
+        "name": "Buscar Bot",
+        "summary": "Lista bots configurados para a instância",
+        "purpose": "Consultar bots ativos e suas configurações básicas",
+        "inputs": "Apenas instanceName e apikey",
+        "outputs": "Lista de bots configurados",
+        "location": {
+          "request": {
+            "startLine": 1104,
+            "endLine": 1107
+          },
+          "response": {
+            "startLine": 1109,
+            "endLine": 1113
+          }
+        }
+      },
+      {
+        "name": "Buscar Bot Específico",
+        "summary": "Obtém detalhes de um bot específico",
+        "purpose": "Consultar configurações detalhadas de bot individual",
+        "inputs": "ID do bot e instanceName",
+        "outputs": "Configurações completas do bot especificado",
+        "location": {
+          "request": {
+            "startLine": 1117,
+            "endLine": 1120
+          },
+          "response": {
+            "startLine": 1122,
+            "endLine": 1126
+          }
+        }
+      },
+      {
+        "name": "Atualizar Bot",
+        "summary": "Modifica configurações de bot existente",
+        "purpose": "Ajustar comportamento e parâmetros de bot já criado",
+        "inputs": "ID do bot e novas configurações completas",
+        "outputs": "Confirmação de sucesso na atualização",
+        "location": {
+          "request": {
+            "startLine": 1130,
+            "endLine": 1150
+          },
+          "response": {
+            "startLine": 1152,
+            "endLine": 1156
+          }
+        }
+      },
+      {
+        "name": "Deletar Bot",
+        "summary": "Remove bot da instância",
+        "purpose": "Excluir bot que não é mais necessário",
+        "inputs": "ID do bot para remoção",
+        "outputs": "Confirmação da exclusão",
+        "location": {
+          "request": {
+            "startLine": 1160,
+            "endLine": 1163
+          },
+          "response": {
+            "startLine": 1164,
+            "endLine": 1164
+          }
+        }
+      },
+      {
+        "name": "Configurações do Bot",
+        "summary": "Define configurações globais para todos os bots",
+        "purpose": "Estabelecer comportamentos padrão e fallbacks do sistema de bots",
+        "inputs": "Configurações globais, timeouts, mensagens padrão e bot de fallback",
+        "outputs": "Confirmação das configurações aplicadas",
+        "location": {
+          "request": {
+            "startLine": 1168,
+            "endLine": 1185
+          },
+          "response": {
+            "startLine": 1186,
+            "endLine": 1186
+          }
+        }
+      },
+      {
+        "name": "Buscar Configurações",
+        "summary": "Consulta configurações globais dos bots",
+        "purpose": "Verificar configurações atuais do sistema de bots",
+        "inputs": "Apenas instanceName e apikey",
+        "outputs": "Configurações globais atuais do sistema",
+        "location": {
+          "request": {
+            "startLine": 1190,
+            "endLine": 1193
+          },
+          "response": {
+            "startLine": 1194,
+            "endLine": 1194
+          }
+        }
+      },
+      {
+        "name": "Alterar Status",
+        "summary": "Modifica status de sessão específica do bot",
+        "purpose": "Controlar estado de conversas individuais com o bot",
+        "inputs": "JID remoto e novo status para a sessão",
+        "outputs": "Confirmação da alteração de status",
+        "location": {
+          "request": {
+            "startLine": 1198,
+            "endLine": 1204
+          },
+          "response": {
+            "startLine": 1205,
+            "endLine": 1205
+          }
+        }
+      },
+      {
+        "name": "Buscar Sessões",
+        "summary": "Lista sessões ativas de um bot específico",
+        "purpose": "Monitorar conversas em andamento e estados das sessões",
+        "inputs": "ID do bot para consulta de sessões",
+        "outputs": "Lista de sessões ativas com seus estados",
+        "location": {
+          "request": {
+            "startLine": 1209,
+            "endLine": 1212
+          },
+          "response": {
+            "startLine": 1213,
+            "endLine": 1213
+          }
+        }
+      }
+    ]
+  },
+  "Websocket": {
+    "description": "Configuração de conexões WebSocket para eventos em tempo real",
+    "endpoints": [
+      {
+        "name": "Configurar Websocket",
+        "summary": "Ativa e configura conexão WebSocket para a instância",
+        "purpose": "Receber eventos em tempo real através de conexão WebSocket",
+        "inputs": "Configurações de ativação e lista de eventos para monitoramento",
+        "outputs": "Confirmação da configuração WebSocket",
+        "location": {
+          "request": {
+            "startLine": 1219,
+            "endLine": 1229
+          },
+          "response": {
+            "startLine": 1230,
+            "endLine": 1230
+          }
+        }
+      },
+      {
+        "name": "Buscar Configurações Websocket",
+        "summary": "Consulta configurações atuais do WebSocket",
+        "purpose": "Verificar status e eventos configurados para WebSocket",
+        "inputs": "Apenas instanceName e apikey",
+        "outputs": "Configurações atuais do WebSocket da instância",
+        "location": {
+          "request": {
+            "startLine": 1234,
+            "endLine": 1237
+          },
+          "response": {
+            "startLine": 1238,
+            "endLine": 1238
+          }
+        }
+      }
+    ]
+  },
+  "Integrações": {
+    "description": "Conectores para sistemas de filas e mensageria externos",
+    "endpoints": [
+      {
+        "name": "Configurar SQS",
+        "summary": "Ativa integração com Amazon Simple Queue Service",
+        "purpose": "Enviar eventos para filas SQS da Amazon para processamento externo",
+        "inputs": "Configurações de ativação e eventos para envio ao SQS",
+        "outputs": "Confirmação da configuração SQS",
+        "location": {
+          "request": {
+            "startLine": 1244,
+            "endLine": 1254
+          },
+          "response": {
+            "startLine": 1255,
+            "endLine": 1255
+          }
+        }
+      },
+      {
+        "name": "Buscar Configurações SQS",
+        "summary": "Consulta configurações atuais do Amazon SQS",
+        "purpose": "Verificar status e eventos configurados para SQS",
+        "inputs": "Apenas instanceName e apikey",
+        "outputs": "Configurações atuais da integração SQS",
+        "location": {
+          "request": {
+            "startLine": 1259,
+            "endLine": 1262
+          },
+          "response": {
+            "startLine": 1263,
+            "endLine": 1263
+          }
+        }
+      },
+      {
+        "name": "Configurar RabbitMQ",
+        "summary": "Ativa integração com RabbitMQ",
+        "purpose": "Enviar eventos para filas RabbitMQ para processamento distribuído",
+        "inputs": "Configurações de ativação e eventos para envio ao RabbitMQ",
+        "outputs": "Confirmação da configuração RabbitMQ",
+        "location": {
+          "request": {
+            "startLine": 1267,
+            "endLine": 1277
+          },
+          "response": {
+            "startLine": 1278,
+            "endLine": 1278
+          }
+        }
+      },
+      {
+        "name": "Buscar Configurações RabbitMQ",
+        "summary": "Consulta configurações atuais do RabbitMQ",
+        "purpose": "Verificar status e eventos configurados para RabbitMQ",
+        "inputs": "Apenas instanceName e apikey",
+        "outputs": "Configurações atuais da integração RabbitMQ",
+        "location": {
+          "request": {
+            "startLine": 1282,
+            "endLine": 1285
+          },
+          "response": {
+            "startLine": 1286,
+            "endLine": 1286
+          }
+        }
+      }
+    ]
+  }
+}

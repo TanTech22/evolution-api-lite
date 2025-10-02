@@ -172,6 +172,26 @@ export const instanceSchema: JSONSchema7 = {
     chatwootMergeBrazilContacts: { type: 'boolean' },
     chatwootImportMessages: { type: 'boolean' },
     chatwootDaysLimitImportMessages: { type: 'number' },
+    // Audio Filters
+    audioFilters: {
+      type: 'object',
+      properties: {
+        enabled: { type: 'boolean' },
+        minDurationSeconds: {
+          type: 'integer',
+          minimum: 1,
+          maximum: 7200,
+        },
+        maxDurationSeconds: {
+          type: 'integer',
+          minimum: 1,
+          maximum: 7200,
+        },
+        replyToOversizeAudio: { type: 'boolean' },
+        oversizeReaction: { type: 'string' },
+      },
+      additionalProperties: false,
+    },
   },
   ...isNotEmpty('instanceName'),
 };
@@ -186,4 +206,37 @@ export const presenceOnlySchema: JSONSchema7 = {
     },
   },
   required: ['presence'],
+};
+
+export const audioFilterSchema: JSONSchema7 = {
+  $id: v4(),
+  type: 'object',
+  properties: {
+    minDurationSeconds: {
+      type: 'integer',
+      minimum: 1,
+      maximum: 7200,
+      description: 'Minimum audio duration in seconds (1-7200)',
+    },
+    maxDurationSeconds: {
+      type: 'integer',
+      minimum: 1,
+      maximum: 7200,
+      description: 'Maximum audio duration in seconds (1-7200)',
+    },
+    enabled: {
+      type: 'boolean',
+      description: 'Enable or disable audio filtering',
+    },
+    replyToOversizeAudio: {
+      type: 'boolean',
+      description: 'Whether to reply when audio exceeds maximum duration',
+    },
+    oversizeReaction: {
+      type: 'string',
+      description: 'Emoji/reaction to send for oversized audio',
+    },
+  },
+  required: ['minDurationSeconds', 'maxDurationSeconds', 'enabled'],
+  additionalProperties: false
 };

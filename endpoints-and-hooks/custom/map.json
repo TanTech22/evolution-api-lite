@@ -1,0 +1,840 @@
+{
+  "Instance Management - Basic": {
+    "description": "Gerenciamento básico de instâncias WhatsApp",
+    "endpoints": [
+      {
+        "name": "Criar Instância",
+        "summary": "Cria uma nova instância WhatsApp com configurações avançadas de filtros",
+        "purpose": "Primeira conexão de número WhatsApp, configurar filtros específicos, definir webhooks e processamento de mídia",
+        "inputs": "instanceName, integration, webhook (enabled, url, events, messageTypes, excludeMessageTypes, textFilters, audioProcessing)",
+        "outputs": "Status, instanceName, qrcode, integration, webhook config, message de sucesso",
+        "location": {
+          "request": {
+            "startLine": 58,
+            "endLine": 87
+          },
+          "response": {
+            "startLine": 89,
+            "endLine": 115
+          }
+        }
+      },
+      {
+        "name": "Listar Instâncias",
+        "summary": "Lista todas as instâncias criadas no servidor",
+        "purpose": "Verificar instâncias disponíveis, monitorar status de conexão, listar para seleção em interface",
+        "inputs": "Apenas apikey no header",
+        "outputs": "Array de instâncias com status, profileName, profilePicUrl, qrcode",
+        "location": {
+          "request": {
+            "startLine": 128,
+            "endLine": 132
+          },
+          "response": {
+            "startLine": 134,
+            "endLine": 162
+          }
+        }
+      },
+      {
+        "name": "Conectar Instância",
+        "summary": "Conecta uma instância desconectada e gera novo QR Code",
+        "purpose": "Reconectar instância desconectada, primeiro login após criação, reconectar após logout",
+        "inputs": "instanceName na URL e apikey no header",
+        "outputs": "QR Code para scan ou mensagem se já conectado",
+        "location": {
+          "request": {
+            "startLine": 175,
+            "endLine": 179
+          },
+          "response": {
+            "startLine": 181,
+            "endLine": 201
+          }
+        }
+      },
+      {
+        "name": "Reiniciar Instância",
+        "summary": "Reinicia uma instância específica",
+        "purpose": "Resolver travamentos, aplicar mudanças de configuração, resolver problemas de conexão",
+        "inputs": "instanceName na URL e apikey no header",
+        "outputs": "Confirmação de reinicialização com estados anterior e atual",
+        "location": {
+          "request": {
+            "startLine": 214,
+            "endLine": 218
+          },
+          "response": {
+            "startLine": 220,
+            "endLine": 231
+          }
+        }
+      },
+      {
+        "name": "Estado da Conexão",
+        "summary": "Verifica o estado atual da conexão de uma instância",
+        "purpose": "Monitoramento de saúde, verificar se pode enviar mensagens, status em dashboards",
+        "inputs": "instanceName na URL e apikey no header",
+        "outputs": "Estado da conexão, dados do perfil, telefone, timestamps de conexão",
+        "location": {
+          "request": {
+            "startLine": 244,
+            "endLine": 248
+          },
+          "response": {
+            "startLine": 250,
+            "endLine": 278
+          }
+        }
+      },
+      {
+        "name": "Logout da Instância",
+        "summary": "Faz logout da instância, mantendo configurações",
+        "purpose": "Trocar número WhatsApp, desconectar temporariamente, manutenção sem perder configurações",
+        "inputs": "instanceName na URL e apikey no header",
+        "outputs": "Confirmação de logout com preservação de configurações",
+        "location": {
+          "request": {
+            "startLine": 291,
+            "endLine": 295
+          },
+          "response": {
+            "startLine": 297,
+            "endLine": 307
+          }
+        }
+      },
+      {
+        "name": "Deletar Instância",
+        "summary": "Remove completamente uma instância e todas suas configurações",
+        "purpose": "Remover instância não utilizada, limpeza de instâncias de teste (AÇÃO IRREVERSÍVEL)",
+        "inputs": "instanceName na URL e apikey no header",
+        "outputs": "Confirmação de deleção com timestamp",
+        "location": {
+          "request": {
+            "startLine": 320,
+            "endLine": 324
+          },
+          "response": {
+            "startLine": 326,
+            "endLine": 336
+          }
+        }
+      },
+      {
+        "name": "Definir Presença",
+        "summary": "Define o status de presença da instância no WhatsApp",
+        "purpose": "Mostrar que bot está online, simular comportamento humano, indicar disponibilidade",
+        "inputs": "instanceName na URL, presence (available/unavailable/composing/recording) no body",
+        "outputs": "Confirmação de atualização da presença com timestamp",
+        "location": {
+          "request": {
+            "startLine": 352,
+            "endLine": 360
+          },
+          "response": {
+            "startLine": 362,
+            "endLine": 373
+          }
+        }
+      }
+    ]
+  },
+  "Instance Management - Advanced": {
+    "description": "Funcionalidades avançadas e customizadas de instâncias",
+    "endpoints": [
+      {
+        "name": "Consultar Filtros",
+        "summary": "Consulta todos os filtros de mensagem configurados para uma instância",
+        "purpose": "Verificar configuração atual de filtros, debug de mensagens não chegando, auditoria de configurações",
+        "inputs": "instanceName na URL e apikey no header",
+        "outputs": "Configurações completas de filtros, tipos de mensagem disponíveis, timestamp de aplicação",
+        "location": {
+          "request": {
+            "startLine": 388,
+            "endLine": 392
+          },
+          "response": {
+            "startLine": 394,
+            "endLine": 431
+          }
+        }
+      },
+      {
+        "name": "Atualizar Filtros",
+        "summary": "Atualiza os filtros de uma instância existente",
+        "purpose": "Ajustar filtros sem recriar instância, mudanças de regras de negócio, otimização baseada em uso",
+        "inputs": "instanceName na URL, configurações de webhook (messageTypes, excludeMessageTypes, textFilters, audioProcessing)",
+        "outputs": "Confirmação de atualização com filtros aplicados e timestamp",
+        "location": {
+          "request": {
+            "startLine": 444,
+            "endLine": 465
+          },
+          "response": {
+            "startLine": 467,
+            "endLine": 487
+          }
+        }
+      },
+      {
+        "name": "Consultar Filtros de Áudio",
+        "summary": "Consulta configurações específicas dos filtros de áudio",
+        "purpose": "Verificar limites de duração de áudio, debug de áudios não processados, auditoria de configuração de mídia",
+        "inputs": "instanceName na URL e apikey no header",
+        "outputs": "Configurações de filtros de áudio, estatísticas de processamento, última atualização",
+        "location": {
+          "request": {
+            "startLine": 500,
+            "endLine": 504
+          },
+          "response": {
+            "startLine": 506,
+            "endLine": 532
+          }
+        }
+      },
+      {
+        "name": "Atualizar Filtros de Áudio",
+        "summary": "Atualiza apenas as configurações de filtros de áudio",
+        "purpose": "Ajustar limites de duração de áudio, modificar mensagens de feedback, configurar comportamento de resposta",
+        "inputs": "instanceName na URL, configurações de áudio (enabled, minDurationSeconds, maxDurationSeconds, replyToInvalidDuration, mensagens)",
+        "outputs": "Confirmação de atualização com configurações aplicadas e timestamp",
+        "location": {
+          "request": {
+            "startLine": 551,
+            "endLine": 564
+          },
+          "response": {
+            "startLine": 566,
+            "endLine": 582
+          }
+        }
+      },
+      {
+        "name": "Estatísticas de Filtros de Áudio",
+        "summary": "Estatísticas detalhadas dos filtros de áudio aplicados",
+        "purpose": "Monitorar efetividade dos filtros, identificar padrões de uso, otimizar configurações",
+        "inputs": "instanceName na URL e apikey no header",
+        "outputs": "Estatísticas completas de áudio processado, análise de duração e tamanho, período de dados",
+        "location": {
+          "request": {
+            "startLine": 595,
+            "endLine": 599
+          },
+          "response": {
+            "startLine": 601,
+            "endLine": 638
+          }
+        }
+      },
+      {
+        "name": "Resetar Estatísticas de Áudio",
+        "summary": "Zera as estatísticas de filtros de áudio",
+        "purpose": "Início de novo período de análise, após mudanças de configuração, limpeza de dados antigos",
+        "inputs": "instanceName na URL e apikey no header",
+        "outputs": "Confirmação de reset com estatísticas anteriores e timestamp",
+        "location": {
+          "request": {
+            "startLine": 651,
+            "endLine": 655
+          },
+          "response": {
+            "startLine": 657,
+            "endLine": 671
+          }
+        }
+      },
+      {
+        "name": "Duplicar Instância",
+        "summary": "Duplica uma instância existente com todas as configurações",
+        "purpose": "Criar instâncias similares rapidamente, replicar configurações testadas, backup de configurações",
+        "inputs": "sourceInstanceName e newInstanceName no body",
+        "outputs": "Confirmação de duplicação com configurações copiadas e QR code da nova instância",
+        "location": {
+          "request": {
+            "startLine": 688,
+            "endLine": 697
+          },
+          "response": {
+            "startLine": 699,
+            "endLine": 717
+          }
+        }
+      },
+      {
+        "name": "Métricas da Instância",
+        "summary": "Métricas detalhadas de performance e uso da instância",
+        "purpose": "Monitoramento de performance, identificar problemas de recursos, relatórios de uso",
+        "inputs": "instanceName na URL e apikey no header",
+        "outputs": "Métricas completas de conexão, performance, database, messaging e filtros",
+        "location": {
+          "request": {
+            "startLine": 730,
+            "endLine": 734
+          },
+          "response": {
+            "startLine": 736,
+            "endLine": 789
+          }
+        }
+      }
+    ]
+  },
+  "Global Queue System": {
+    "description": "Sistema de fila global de processamento com rate limiting",
+    "endpoints": [
+      {
+        "name": "Estatísticas da Fila",
+        "summary": "Estatísticas em tempo real da fila global de processamento",
+        "purpose": "Monitorar performance do sistema, verificar rate limiting, dashboard de administração",
+        "inputs": "Apenas apikey no header",
+        "outputs": "Estatísticas completas da fila, processamento, rate limiting, áudio e webhook global",
+        "location": {
+          "request": {
+            "startLine": 804,
+            "endLine": 808
+          },
+          "response": {
+            "startLine": 810,
+            "endLine": 857
+          }
+        }
+      },
+      {
+        "name": "Métricas da Fila",
+        "summary": "Métricas avançadas e históricas da fila global",
+        "purpose": "Análise histórica de performance, identificação de padrões de erro, métricas por instância",
+        "inputs": "Apenas apikey no header",
+        "outputs": "Métricas de performance, análise de erros, breakdown por instância",
+        "location": {
+          "request": {
+            "startLine": 865,
+            "endLine": 869
+          },
+          "response": {
+            "startLine": 871,
+            "endLine": 910
+          }
+        }
+      },
+      {
+        "name": "Resetar Métricas da Fila",
+        "summary": "Reseta todas as métricas da fila global",
+        "purpose": "Limpar dados antigos, início de novo período de análise, manutenção de performance",
+        "inputs": "Apenas apikey no header",
+        "outputs": "Confirmação de reset com métricas anteriores",
+        "location": {
+          "request": {
+            "startLine": 918,
+            "endLine": 922
+          },
+          "response": {
+            "startLine": 924,
+            "endLine": 937
+          }
+        }
+      }
+    ]
+  },
+  "Dual Webhook System - Health": {
+    "description": "Monitoramento de saúde do sistema dual de webhooks",
+    "endpoints": [
+      {
+        "name": "Saúde dos Webhooks",
+        "summary": "Verifica a saúde geral do sistema de webhooks",
+        "purpose": "Health check automático, monitoramento de infraestrutura, alertas de sistema",
+        "inputs": "Apenas apikey no header",
+        "outputs": "Status de saúde, summary com métricas, configurações e thresholds",
+        "location": {
+          "request": {
+            "startLine": 954,
+            "endLine": 958
+          },
+          "response": {
+            "startLine": 960,
+            "endLine": 1008
+          }
+        }
+      },
+      {
+        "name": "Métricas dos Webhooks",
+        "summary": "Estatísticas detalhadas de todos os webhooks",
+        "purpose": "Análise de performance, identificação de problemas, relatórios de entrega",
+        "inputs": "Apenas apikey no header",
+        "outputs": "Métricas completas com overview, análise de erros, performance e stats por instância",
+        "location": {
+          "request": {
+            "startLine": 1016,
+            "endLine": 1020
+          },
+          "response": {
+            "startLine": 1022,
+            "endLine": 1098
+          }
+        }
+      }
+    ]
+  },
+  "Dual Webhook System - Logs": {
+    "description": "Sistema de logs e auditoria dos webhooks",
+    "endpoints": [
+      {
+        "name": "Consultar Logs",
+        "summary": "Consulta logs recentes de webhooks com filtros",
+        "purpose": "Auditoria de entregas, debug de problemas, análise de eventos",
+        "inputs": "Query params: limit, type (errors/success), instance, since",
+        "outputs": "Array de logs com detalhes completos, paginação e filtros aplicados",
+        "location": {
+          "request": {
+            "startLine": 1114,
+            "endLine": 1124
+          },
+          "response": {
+            "startLine": 1126,
+            "endLine": 1195
+          }
+        }
+      },
+      {
+        "name": "Exportar Logs",
+        "summary": "Exporta todos os logs em formato JSON ou CSV",
+        "purpose": "Backup de logs, análise externa, compliance e auditoria",
+        "inputs": "Query params: format (json/csv), since (data inicial)",
+        "outputs": "Arquivo de logs com informações de exportação",
+        "location": {
+          "request": {
+            "startLine": 1207,
+            "endLine": 1219
+          },
+          "response": {
+            "startLine": 1221,
+            "endLine": 1237
+          }
+        }
+      },
+      {
+        "name": "Limpar Logs",
+        "summary": "Limpa todos os logs e métricas de webhooks",
+        "purpose": "Limpeza de dados antigos, reset para novo período de análise, manutenção de performance",
+        "inputs": "Apenas apikey no header",
+        "outputs": "Confirmação de limpeza com estatísticas de dados removidos",
+        "location": {
+          "request": {
+            "startLine": 1475,
+            "endLine": 1479
+          },
+          "response": {
+            "startLine": 1481,
+            "endLine": 1495
+          }
+        }
+      }
+    ]
+  },
+  "Dual Webhook System - Retry": {
+    "description": "Sistema de falhas e retry dos webhooks",
+    "endpoints": [
+      {
+        "name": "Listar Falhas",
+        "summary": "Lista webhooks que falharam e estão aguardando retry",
+        "purpose": "Monitorar falhas pendentes, acompanhar tentativas de retry, gestão de falhas",
+        "inputs": "Apenas apikey no header",
+        "outputs": "Lista de webhooks falhados com detalhes de retry e summary",
+        "location": {
+          "request": {
+            "startLine": 1247,
+            "endLine": 1251
+          },
+          "response": {
+            "startLine": 1253,
+            "endLine": 1309
+          }
+        }
+      },
+      {
+        "name": "Remover Falha Específica",
+        "summary": "Remove um webhook específico da fila de retry",
+        "purpose": "Cancelar retry específico, limpeza manual, webhook URL foi corrigido",
+        "inputs": "webhookId na URL e apikey no header",
+        "outputs": "Confirmação de remoção com dados do webhook removido",
+        "location": {
+          "request": {
+            "startLine": 1322,
+            "endLine": 1326
+          },
+          "response": {
+            "startLine": 1328,
+            "endLine": 1342
+          }
+        }
+      },
+      {
+        "name": "Limpar Todas as Falhas",
+        "summary": "Limpa todos os webhooks falhados da fila de retry",
+        "purpose": "Manutenção geral, após correção de problemas de infraestrutura, limpeza em massa",
+        "inputs": "Apenas apikey no header",
+        "outputs": "Confirmação de limpeza com contagem e breakdown dos removidos",
+        "location": {
+          "request": {
+            "startLine": 1355,
+            "endLine": 1359
+          },
+          "response": {
+            "startLine": 1361,
+            "endLine": 1375
+          }
+        }
+      }
+    ]
+  },
+  "Dual Webhook System - Testing": {
+    "description": "Sistema de testes de conectividade dos webhooks",
+    "endpoints": [
+      {
+        "name": "Testar Webhook",
+        "summary": "Testa conectividade com um webhook específico",
+        "purpose": "Validar URL antes de configurar, diagnosticar problemas, teste de integração",
+        "inputs": "url (obrigatório) e payload (opcional) no body",
+        "outputs": "Resultado do teste com status, response time, headers e body da resposta",
+        "location": {
+          "request": {
+            "startLine": 1394,
+            "endLine": 1420
+          },
+          "response": {
+            "startLine": 1422,
+            "endLine": 1462
+          }
+        }
+      }
+    ]
+  },
+  "Global Webhook Configuration": {
+    "description": "Configuração global dos webhooks principal e monitoramento",
+    "endpoints": [
+      {
+        "name": "Consultar Configuração Global",
+        "summary": "Consulta a configuração atual dos webhooks globais",
+        "purpose": "Verificar configurações ativas, auditoria de configuração, debug de problemas",
+        "inputs": "Apenas apikey no header",
+        "outputs": "Configurações completas de webhooks principal e monitoramento, headers, retry, estatísticas",
+        "location": {
+          "request": {
+            "startLine": 1510,
+            "endLine": 1514
+          },
+          "response": {
+            "startLine": 1516,
+            "endLine": 1575
+          }
+        }
+      },
+      {
+        "name": "Criar/Atualizar Configuração Global",
+        "summary": "Cria ou atualiza a configuração global de webhooks",
+        "purpose": "Primeira configuração do sistema, mudança de URLs, atualização de headers de autenticação",
+        "inputs": "Configurações de principal, monitoramento, webhookByEvents, headers",
+        "outputs": "Confirmação de atualização com validação das configurações",
+        "location": {
+          "request": {
+            "startLine": 1594,
+            "endLine": 1630
+          },
+          "response": {
+            "startLine": 1632,
+            "endLine": 1661
+          }
+        }
+      },
+      {
+        "name": "Desabilitar Configuração Global",
+        "summary": "Desabilita todos os webhooks globais, mantendo configurações",
+        "purpose": "Manutenção temporária, problemas no webhook de destino, desabilitação rápida",
+        "inputs": "Apenas apikey no header",
+        "outputs": "Confirmação de desabilitação mantendo configurações para reativação",
+        "location": {
+          "request": {
+            "startLine": 1674,
+            "endLine": 1678
+          },
+          "response": {
+            "startLine": 1680,
+            "endLine": 1703
+          }
+        }
+      },
+      {
+        "name": "Testar Configuração Global",
+        "summary": "Testa conectividade de webhook antes de salvar configuração",
+        "purpose": "Validar URL antes de configurar, teste de autenticação, verificar funcionamento",
+        "inputs": "url (obrigatório), type (principal/monitoramento), headers (opcional)",
+        "outputs": "Resultado do teste com recomendação de configuração",
+        "location": {
+          "request": {
+            "startLine": 1721,
+            "endLine": 1733
+          },
+          "response": {
+            "startLine": 1735,
+            "endLine": 1790
+          }
+        }
+      }
+    ]
+  },
+  "Processing Feedback System": {
+    "description": "Sistema de feedback visual com reactions durante processamento",
+    "endpoints": [
+      {
+        "name": "Iniciar Processamento",
+        "summary": "Inicia feedback visual com reactions alternadas durante processamento",
+        "purpose": "Processos longos (transcrição, análise), feedback visual para usuário, indicar processamento ativo",
+        "inputs": "instance, chatId, messageId (obrigatórios), processType (opcional)",
+        "outputs": "Confirmação de início com sessionId, configurações e status",
+        "location": {
+          "request": {
+            "startLine": 1811,
+            "endLine": 1822
+          },
+          "response": {
+            "startLine": 1824,
+            "endLine": 1850
+          }
+        }
+      },
+      {
+        "name": "Finalizar Processamento",
+        "summary": "Finaliza o processamento com resultado e reaction final",
+        "purpose": "Concluir processamento, parar loop de reactions, enviar resultado para usuário",
+        "inputs": "instance, chatId, messageId, status (success/error/aborted), texto (opcional), errorMessage (opcional)",
+        "outputs": "Confirmação de finalização com duração, reaction final e ações executadas",
+        "location": {
+          "request": {
+            "startLine": 1868,
+            "endLine": 1895
+          },
+          "response": {
+            "startLine": 1897,
+            "endLine": 1920
+          }
+        }
+      },
+      {
+        "name": "Status do Processamento",
+        "summary": "Monitora todas as sessões ativas de processamento",
+        "purpose": "Dashboard de administração, monitoramento de sistema, debug de sessões travadas",
+        "inputs": "Apenas apikey no header",
+        "outputs": "Lista de sessões ativas com detalhes, estatísticas e saúde do sistema",
+        "location": {
+          "request": {
+            "startLine": 1932,
+            "endLine": 1936
+          },
+          "response": {
+            "startLine": 1938,
+            "endLine": 1994
+          }
+        }
+      },
+      {
+        "name": "Limpar Sessão",
+        "summary": "Força limpeza de uma sessão específica (admin/debug)",
+        "purpose": "Sessão travada que não responde, cleanup manual para debugging, cancelamento forçado",
+        "inputs": "sessionId na URL e apikey no header",
+        "outputs": "Confirmação de limpeza com informações da sessão e ações executadas",
+        "location": {
+          "request": {
+            "startLine": 2007,
+            "endLine": 2011
+          },
+          "response": {
+            "startLine": 2013,
+            "endLine": 2036
+          }
+        }
+      }
+    ]
+  },
+  "S3 Cleanup System": {
+    "description": "Sistema de limpeza automática de arquivos S3",
+    "endpoints": [
+      {
+        "name": "Consultar Agendamento",
+        "summary": "Consulta o agendamento atual do cleanup automático",
+        "purpose": "Verificar configuração de limpeza, auditoria de retenção, planning de armazenamento",
+        "inputs": "Apenas apikey no header",
+        "outputs": "Configuração completa do agendamento, última execução, próxima execução, estatísticas",
+        "location": {
+          "request": {
+            "startLine": 2051,
+            "endLine": 2055
+          },
+          "response": {
+            "startLine": 2057,
+            "endLine": 2093
+          }
+        }
+      },
+      {
+        "name": "Atualizar Agendamento",
+        "summary": "Atualiza a configuração do cleanup automático",
+        "purpose": "Alterar horário de execução, modificar período de retenção, habilitar/desabilitar cleanup",
+        "inputs": "Configurações de enabled, retentionDays, dailyTime, timezone",
+        "outputs": "Confirmação de atualização com mudanças aplicadas e próxima execução",
+        "location": {
+          "request": {
+            "startLine": 2112,
+            "endLine": 2123
+          },
+          "response": {
+            "startLine": 2125,
+            "endLine": 2156
+          }
+        }
+      },
+      {
+        "name": "Executar Cleanup Manual",
+        "summary": "Executa cleanup manual imediato",
+        "purpose": "Limpeza urgente de espaço, teste de configuração, manutenção ad-hoc",
+        "inputs": "Apenas apikey no header",
+        "outputs": "Status de execução (running/completed) com resultados detalhados",
+        "location": {
+          "request": {
+            "startLine": 2169,
+            "endLine": 2173
+          },
+          "response": {
+            "startLine": 2175,
+            "endLine": 2218
+          }
+        }
+      },
+      {
+        "name": "Status do Cleanup",
+        "summary": "Status detalhado e próxima execução do cleanup",
+        "purpose": "Monitoramento de sistema, verificar última execução, dashboard de administração",
+        "inputs": "Apenas apikey no header",
+        "outputs": "Status completo do sistema com cleanup, storage, estatísticas e saúde",
+        "location": {
+          "request": {
+            "startLine": 2231,
+            "endLine": 2235
+          },
+          "response": {
+            "startLine": 2237,
+            "endLine": 2295
+          }
+        }
+      }
+    ]
+  },
+  "Authentication": {
+    "description": "Sistema de autenticação da API",
+    "info": {
+      "config": "Variável de ambiente AUTHENTICATION_API_KEY_KEY",
+      "location": {
+        "startLine": 2299,
+        "endLine": 2338
+      }
+    }
+  },
+  "Webhook Payloads": {
+    "description": "Estruturas de payload dos webhooks principal e monitoramento",
+    "payloads": [
+      {
+        "name": "Webhook Principal",
+        "summary": "Payload para webhook principal contendo dados de negócio",
+        "purpose": "Receber eventos de mensagens, dados de usuário, informações de mídia",
+        "structure": "event, instance, data (key, message, timestamps, URLs), server_url, apikey",
+        "example_events": ["messages.upsert"],
+        "location": {
+          "startLine": 2483,
+          "endLine": 2506
+        }
+      },
+      {
+        "name": "Webhook Monitoramento",
+        "summary": "Payload para webhook de monitoramento contendo erros e estatísticas",
+        "purpose": "Receber alertas de sistema, estatísticas de fila, status de rate limiting",
+        "structure": "event, timestamp, instance, data (queueSize, processedCount, stats), server_url",
+        "example_events": ["queue.stats", "queue.error"],
+        "location": {
+          "startLine": 2508,
+          "endLine": 2529
+        }
+      }
+    ]
+  },
+  "Practical Examples": {
+    "description": "Cenários práticos de uso da API",
+    "scenarios": [
+      {
+        "name": "Configuração de Bot de Atendimento",
+        "summary": "Setup completo de bot para atendimento com filtros e monitoramento",
+        "steps": "Criar instância com filtros, configurar webhook global, verificar conexão",
+        "location": {
+          "startLine": 2344,
+          "endLine": 2390
+        }
+      },
+      {
+        "name": "Processamento de Áudio com Feedback",
+        "summary": "Fluxo completo de processamento de áudio com feedback visual",
+        "steps": "Iniciar feedback, processar áudio, finalizar com resultado",
+        "location": {
+          "startLine": 2394,
+          "endLine": 2421
+        }
+      },
+      {
+        "name": "Monitoramento e Troubleshooting",
+        "summary": "Verificações de saúde e debugging do sistema",
+        "steps": "Health check, estatísticas, logs de erro, métricas, sessões ativas",
+        "location": {
+          "startLine": 2425,
+          "endLine": 2447
+        }
+      },
+      {
+        "name": "Ajuste de Filtros em Produção",
+        "summary": "Otimização de filtros baseada em dados de uso",
+        "steps": "Consultar filtros atuais, ver estatísticas, ajustar configurações, resetar stats",
+        "location": {
+          "startLine": 2451,
+          "endLine": 2477
+        }
+      }
+    ]
+  },
+  "HTTP Status Codes": {
+    "description": "Códigos de status HTTP utilizados pela API",
+    "codes": {
+      "200": "OK - Operação realizada com sucesso",
+      "201": "Created - Recurso criado com sucesso",
+      "400": "Bad Request - Dados inválidos na requisição",
+      "401": "Unauthorized - API key ausente ou inválida",
+      "403": "Forbidden - Sem permissão para acessar o recurso",
+      "404": "Not Found - Recurso não encontrado",
+      "500": "Internal Server Error - Erro interno do servidor"
+    },
+    "location": {
+      "startLine": 2533,
+      "endLine": 2544
+    }
+  },
+  "Implementation Checklist": {
+    "description": "Lista de funcionalidades implementadas na API",
+    "features": {
+      "instances": ["Criação com filtros avançados", "Listagem e status", "Conexão e reconexão", "Filtros de mensagem e áudio", "Duplicação de instâncias", "Métricas detalhadas"],
+      "queue_system": ["Rate limiting com token bucket", "Estatísticas em tempo real", "Processamento assíncrono"],
+      "dual_webhook": ["Webhook principal para dados", "Webhook monitoramento para alertas", "Sistema robusto de retry", "Logs e métricas detalhadas"],
+      "processing_feedback": ["Reactions visuais alternadas", "Timeout automático", "Envio de resultado via texto"],
+      "s3_cleanup": ["Agendamento automático", "Execução manual", "Configuração flexível"]
+    },
+    "location": {
+      "startLine": 2547,
+      "endLine": 2579
+    }
+  }
+}

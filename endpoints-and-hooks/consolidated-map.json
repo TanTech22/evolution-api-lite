@@ -1,0 +1,1592 @@
+{
+  "metadata": {
+    "description": "Biblioteca consolidada de endpoints e webhooks da Evolution API",
+    "created": "2025-10-01",
+    "sources": [
+      "evolution-native",
+      "custom"
+    ],
+    "total_entries": 81,
+    "version": "1.0"
+  },
+  "endpoints": [
+    {
+      "id": "status-da-api",
+      "source": "native",
+      "category": "API Status",
+      "type": "endpoint",
+      "name": "Status da API",
+      "summary": "Verifica se a API está funcionando e retorna informações básicas",
+      "keywords": [
+        "status",
+        "health",
+        "versao",
+        "documentacao",
+        "conectividade"
+      ]
+    },
+    {
+      "id": "configurar-instancia",
+      "source": "native",
+      "category": "Settings Controller",
+      "type": "endpoint",
+      "name": "Configurar Instância",
+      "summary": "Define configurações de comportamento da instância WhatsApp",
+      "keywords": [
+        "configuracao",
+        "comportamento",
+        "chamadas",
+        "grupos",
+        "online",
+        "leitura"
+      ]
+    },
+    {
+      "id": "buscar-configuracoes",
+      "source": "native",
+      "category": "Settings Controller",
+      "type": "endpoint",
+      "name": "Buscar Configurações",
+      "summary": "Recupera as configurações atuais da instância",
+      "keywords": [
+        "consultar",
+        "configuracoes",
+        "auditoria",
+        "validacao"
+      ]
+    },
+    {
+      "id": "enviar-texto",
+      "source": "native",
+      "category": "Message Controller",
+      "type": "endpoint",
+      "name": "Enviar Texto",
+      "summary": "Envia mensagem de texto simples ou com formatação",
+      "keywords": [
+        "texto",
+        "mensagem",
+        "formatacao",
+        "mencoes",
+        "citacoes",
+        "preview"
+      ]
+    },
+    {
+      "id": "enviar-status",
+      "source": "native",
+      "category": "Message Controller",
+      "type": "endpoint",
+      "name": "Enviar Status",
+      "summary": "Publica status/story no WhatsApp",
+      "keywords": [
+        "status",
+        "story",
+        "temporario",
+        "24h",
+        "contatos"
+      ]
+    },
+    {
+      "id": "enviar-midia",
+      "source": "native",
+      "category": "Message Controller",
+      "type": "endpoint",
+      "name": "Enviar Mídia",
+      "summary": "Envia arquivos de mídia (imagem, vídeo, documento)",
+      "keywords": [
+        "midia",
+        "imagem",
+        "video",
+        "documento",
+        "arquivo",
+        "legenda"
+      ]
+    },
+    {
+      "id": "enviar-audio",
+      "source": "native",
+      "category": "Message Controller",
+      "type": "endpoint",
+      "name": "Enviar Áudio",
+      "summary": "Envia mensagens de voz/áudio",
+      "keywords": [
+        "audio",
+        "voz",
+        "ptt",
+        "push-to-talk",
+        "duracao"
+      ]
+    },
+    {
+      "id": "enviar-sticker",
+      "source": "native",
+      "category": "Message Controller",
+      "type": "endpoint",
+      "name": "Enviar Sticker",
+      "summary": "Envia figurinhas/adesivos",
+      "keywords": [
+        "sticker",
+        "figurinha",
+        "adesivo",
+        "visual"
+      ]
+    },
+    {
+      "id": "enviar-localizacao",
+      "source": "native",
+      "category": "Message Controller",
+      "type": "endpoint",
+      "name": "Enviar Localização",
+      "summary": "Compartilha localização geográfica",
+      "keywords": [
+        "localizacao",
+        "gps",
+        "coordenadas",
+        "latitude",
+        "longitude",
+        "endereco"
+      ]
+    },
+    {
+      "id": "enviar-contato",
+      "source": "native",
+      "category": "Message Controller",
+      "type": "endpoint",
+      "name": "Enviar Contato",
+      "summary": "Compartilha informações de contato",
+      "keywords": [
+        "contato",
+        "cartao",
+        "vcard",
+        "telefone",
+        "email",
+        "organizacao"
+      ]
+    },
+    {
+      "id": "enviar-reacao",
+      "source": "native",
+      "category": "Message Controller",
+      "type": "endpoint",
+      "name": "Enviar Reação",
+      "summary": "Adiciona reação emoji a mensagens",
+      "keywords": [
+        "reacao",
+        "emoji",
+        "resposta",
+        "rapida"
+      ]
+    },
+    {
+      "id": "enviar-enquete",
+      "source": "native",
+      "category": "Message Controller",
+      "type": "endpoint",
+      "name": "Enviar Enquete",
+      "summary": "Cria enquetes/pesquisas com múltiplas opções",
+      "keywords": [
+        "enquete",
+        "pesquisa",
+        "votacao",
+        "opcoes",
+        "opiniao"
+      ]
+    },
+    {
+      "id": "enviar-lista",
+      "source": "native",
+      "category": "Message Controller",
+      "type": "endpoint",
+      "name": "Enviar Lista",
+      "summary": "Envia lista interativa com múltiplas seções",
+      "keywords": [
+        "lista",
+        "interativa",
+        "menu",
+        "secoes",
+        "opcoes"
+      ]
+    },
+    {
+      "id": "enviar-botoes",
+      "source": "native",
+      "category": "Message Controller",
+      "type": "endpoint",
+      "name": "Enviar Botões",
+      "summary": "Cria mensagem com botões interativos",
+      "keywords": [
+        "botoes",
+        "interativo",
+        "interface",
+        "respostas",
+        "acoes"
+      ]
+    },
+    {
+      "id": "verificar-numeros-whatsapp",
+      "source": "native",
+      "category": "Chat Controller",
+      "type": "endpoint",
+      "name": "Verificar Números WhatsApp",
+      "summary": "Valida se números possuem conta WhatsApp ativa",
+      "keywords": [
+        "verificar",
+        "numeros",
+        "validar",
+        "conta",
+        "existencia"
+      ]
+    },
+    {
+      "id": "marcar-como-lida",
+      "source": "native",
+      "category": "Chat Controller",
+      "type": "endpoint",
+      "name": "Marcar como Lida",
+      "summary": "Marca mensagens específicas como lidas",
+      "keywords": [
+        "marcar",
+        "lida",
+        "leitura",
+        "status"
+      ]
+    },
+    {
+      "id": "marcar-chat-como-nao-lido",
+      "source": "native",
+      "category": "Chat Controller",
+      "type": "endpoint",
+      "name": "Marcar Chat como Não Lido",
+      "summary": "Define conversa como não lida",
+      "keywords": [
+        "nao-lido",
+        "reverter",
+        "destacar",
+        "conversa"
+      ]
+    },
+    {
+      "id": "arquivar-chat",
+      "source": "native",
+      "category": "Chat Controller",
+      "type": "endpoint",
+      "name": "Arquivar Chat",
+      "summary": "Move conversa para pasta de arquivados",
+      "keywords": [
+        "arquivar",
+        "organizar",
+        "pasta",
+        "principal"
+      ]
+    },
+    {
+      "id": "apagar-mensagem",
+      "source": "native",
+      "category": "Chat Controller",
+      "type": "endpoint",
+      "name": "Apagar Mensagem",
+      "summary": "Remove mensagem para todos os participantes",
+      "keywords": [
+        "apagar",
+        "deletar",
+        "remover",
+        "revogar",
+        "todos"
+      ]
+    },
+    {
+      "id": "atualizar-mensagem",
+      "source": "native",
+      "category": "Chat Controller",
+      "type": "endpoint",
+      "name": "Atualizar Mensagem",
+      "summary": "Edita conteúdo de mensagem já enviada",
+      "keywords": [
+        "editar",
+        "modificar",
+        "atualizar",
+        "corrigir"
+      ]
+    },
+    {
+      "id": "enviar-presenca",
+      "source": "native",
+      "category": "Chat Controller",
+      "type": "endpoint",
+      "name": "Enviar Presença",
+      "summary": "Define status de atividade (digitando, online, etc.)",
+      "keywords": [
+        "presenca",
+        "atividade",
+        "digitando",
+        "online",
+        "indicadores"
+      ]
+    },
+    {
+      "id": "status-de-bloqueio",
+      "source": "native",
+      "category": "Chat Controller",
+      "type": "endpoint",
+      "name": "Status de Bloqueio",
+      "summary": "Bloqueia ou desbloqueia contatos",
+      "keywords": [
+        "bloquear",
+        "desbloquear",
+        "privacidade",
+        "contatos"
+      ]
+    },
+    {
+      "id": "buscar-foto-de-perfil",
+      "source": "native",
+      "category": "Chat Controller",
+      "type": "endpoint",
+      "name": "Buscar Foto de Perfil",
+      "summary": "Obtém URL da foto de perfil de contatos",
+      "keywords": [
+        "foto",
+        "perfil",
+        "avatar",
+        "imagem",
+        "url"
+      ]
+    },
+    {
+      "id": "obter-base64-de-midia",
+      "source": "native",
+      "category": "Chat Controller",
+      "type": "endpoint",
+      "name": "Obter Base64 de Mídia",
+      "summary": "Converte mídia de mensagens para Base64",
+      "keywords": [
+        "base64",
+        "midia",
+        "converter",
+        "extrair",
+        "processar"
+      ]
+    },
+    {
+      "id": "buscar-contatos",
+      "source": "native",
+      "category": "Chat Controller",
+      "type": "endpoint",
+      "name": "Buscar Contatos",
+      "summary": "Consulta informações de contatos salvos",
+      "keywords": [
+        "contatos",
+        "buscar",
+        "consultar",
+        "listagem"
+      ]
+    },
+    {
+      "id": "buscar-mensagens",
+      "source": "native",
+      "category": "Chat Controller",
+      "type": "endpoint",
+      "name": "Buscar Mensagens",
+      "summary": "Pesquisa mensagens por critérios específicos",
+      "keywords": [
+        "mensagens",
+        "pesquisar",
+        "historico",
+        "criterios"
+      ]
+    },
+    {
+      "id": "buscar-mensagens-de-status",
+      "source": "native",
+      "category": "Chat Controller",
+      "type": "endpoint",
+      "name": "Buscar Mensagens de Status",
+      "summary": "Consulta stories/status publicados",
+      "keywords": [
+        "status",
+        "stories",
+        "historico",
+        "monitoramento"
+      ]
+    },
+    {
+      "id": "buscar-chats",
+      "source": "native",
+      "category": "Chat Controller",
+      "type": "endpoint",
+      "name": "Buscar Chats",
+      "summary": "Lista todas as conversas ativas",
+      "keywords": [
+        "chats",
+        "conversas",
+        "dashboard",
+        "visao-geral"
+      ]
+    },
+    {
+      "id": "buscar-perfil-comercial",
+      "source": "native",
+      "category": "Chat Controller",
+      "type": "endpoint",
+      "name": "Buscar Perfil Comercial",
+      "summary": "Obtém informações de Business Profile",
+      "keywords": [
+        "comercial",
+        "business",
+        "empresa",
+        "perfil"
+      ]
+    },
+    {
+      "id": "buscar-perfil",
+      "source": "native",
+      "category": "Chat Controller",
+      "type": "endpoint",
+      "name": "Buscar Perfil",
+      "summary": "Consulta informações públicas de perfil",
+      "keywords": [
+        "perfil",
+        "publico",
+        "informacoes",
+        "usuario"
+      ]
+    },
+    {
+      "id": "atualizar-nome-do-perfil",
+      "source": "native",
+      "category": "Chat Controller",
+      "type": "endpoint",
+      "name": "Atualizar Nome do Perfil",
+      "summary": "Modifica o nome exibido no perfil",
+      "keywords": [
+        "nome",
+        "perfil",
+        "identidade",
+        "personalizar"
+      ]
+    },
+    {
+      "id": "atualizar-status-do-perfil",
+      "source": "native",
+      "category": "Chat Controller",
+      "type": "endpoint",
+      "name": "Atualizar Status do Perfil",
+      "summary": "Altera a frase de status/recado",
+      "keywords": [
+        "status",
+        "recado",
+        "frase",
+        "personalizar"
+      ]
+    },
+    {
+      "id": "atualizar-foto-do-perfil",
+      "source": "native",
+      "category": "Chat Controller",
+      "type": "endpoint",
+      "name": "Atualizar Foto do Perfil",
+      "summary": "Define nova imagem de perfil",
+      "keywords": [
+        "foto",
+        "avatar",
+        "imagem",
+        "identificacao"
+      ]
+    },
+    {
+      "id": "remover-foto-do-perfil",
+      "source": "native",
+      "category": "Chat Controller",
+      "type": "endpoint",
+      "name": "Remover Foto do Perfil",
+      "summary": "Exclui a imagem de perfil atual",
+      "keywords": [
+        "remover",
+        "excluir",
+        "foto",
+        "padrao"
+      ]
+    },
+    {
+      "id": "buscar-configuracoes-de-privacidade",
+      "source": "native",
+      "category": "Chat Controller",
+      "type": "endpoint",
+      "name": "Buscar Configurações de Privacidade",
+      "summary": "Consulta configurações atuais de privacidade",
+      "keywords": [
+        "privacidade",
+        "configuracoes",
+        "visibilidade",
+        "acesso"
+      ]
+    },
+    {
+      "id": "atualizar-configuracoes-de-privacidade",
+      "source": "native",
+      "category": "Chat Controller",
+      "type": "endpoint",
+      "name": "Atualizar Configurações de Privacidade",
+      "summary": "Modifica configurações de visibilidade e acesso",
+      "keywords": [
+        "privacidade",
+        "visibilidade",
+        "controlar",
+        "grupos"
+      ]
+    },
+    {
+      "id": "criar-grupo",
+      "source": "native",
+      "category": "Group Controller",
+      "type": "endpoint",
+      "name": "Criar Grupo",
+      "summary": "Cria novo grupo com participantes iniciais",
+      "keywords": [
+        "criar",
+        "grupo",
+        "participantes",
+        "novo"
+      ]
+    },
+    {
+      "id": "atualizar-foto-do-grupo",
+      "source": "native",
+      "category": "Group Controller",
+      "type": "endpoint",
+      "name": "Atualizar Foto do Grupo",
+      "summary": "Define nova imagem de identificação do grupo",
+      "keywords": [
+        "foto",
+        "grupo",
+        "avatar",
+        "identificacao"
+      ]
+    },
+    {
+      "id": "atualizar-assunto-do-grupo",
+      "source": "native",
+      "category": "Group Controller",
+      "type": "endpoint",
+      "name": "Atualizar Assunto do Grupo",
+      "summary": "Modifica o nome/título do grupo",
+      "keywords": [
+        "nome",
+        "titulo",
+        "assunto",
+        "renomear"
+      ]
+    },
+    {
+      "id": "atualizar-descricao-do-grupo",
+      "source": "native",
+      "category": "Group Controller",
+      "type": "endpoint",
+      "name": "Atualizar Descrição do Grupo",
+      "summary": "Altera a descrição informativa do grupo",
+      "keywords": [
+        "descricao",
+        "proposito",
+        "regras",
+        "informacao"
+      ]
+    },
+    {
+      "id": "obter-codigo-de-convite",
+      "source": "native",
+      "category": "Group Controller",
+      "type": "endpoint",
+      "name": "Obter Código de Convite",
+      "summary": "Gera link de convite para o grupo",
+      "keywords": [
+        "convite",
+        "link",
+        "codigo",
+        "entrada"
+      ]
+    },
+    {
+      "id": "revogar-codigo-de-convite",
+      "source": "native",
+      "category": "Group Controller",
+      "type": "endpoint",
+      "name": "Revogar Código de Convite",
+      "summary": "Invalida link de convite atual",
+      "keywords": [
+        "revogar",
+        "invalidar",
+        "seguranca",
+        "novo"
+      ]
+    },
+    {
+      "id": "enviar-convite",
+      "source": "native",
+      "category": "Group Controller",
+      "type": "endpoint",
+      "name": "Enviar Convite",
+      "summary": "Convida pessoas específicas para o grupo",
+      "keywords": [
+        "convite",
+        "direto",
+        "adicionar",
+        "membros"
+      ]
+    },
+    {
+      "id": "informacoes-do-convite",
+      "source": "native",
+      "category": "Group Controller",
+      "type": "endpoint",
+      "name": "Informações do Convite",
+      "summary": "Consulta dados de um link de convite",
+      "keywords": [
+        "informacoes",
+        "convite",
+        "dados",
+        "verificar"
+      ]
+    },
+    {
+      "id": "buscar-informacoes-do-grupo",
+      "source": "native",
+      "category": "Group Controller",
+      "type": "endpoint",
+      "name": "Buscar Informações do Grupo",
+      "summary": "Obtém dados detalhados de um grupo específico",
+      "keywords": [
+        "informacoes",
+        "detalhes",
+        "participantes",
+        "configuracoes"
+      ]
+    },
+    {
+      "id": "buscar-todos-os-grupos",
+      "source": "native",
+      "category": "Group Controller",
+      "type": "endpoint",
+      "name": "Buscar Todos os Grupos",
+      "summary": "Lista todos os grupos da instância",
+      "keywords": [
+        "todos",
+        "grupos",
+        "lista",
+        "participacao"
+      ]
+    },
+    {
+      "id": "listar-participantes",
+      "source": "native",
+      "category": "Group Controller",
+      "type": "endpoint",
+      "name": "Listar Participantes",
+      "summary": "Consulta membros de um grupo específico",
+      "keywords": [
+        "participantes",
+        "membros",
+        "lista",
+        "administracao"
+      ]
+    },
+    {
+      "id": "atualizar-participante",
+      "source": "native",
+      "category": "Group Controller",
+      "type": "endpoint",
+      "name": "Atualizar Participante",
+      "summary": "Adiciona, remove ou promove membros do grupo",
+      "keywords": [
+        "adicionar",
+        "remover",
+        "promover",
+        "permissoes"
+      ]
+    },
+    {
+      "id": "atualizar-configuracoes",
+      "source": "native",
+      "category": "Group Controller",
+      "type": "endpoint",
+      "name": "Atualizar Configurações",
+      "summary": "Modifica configurações de funcionamento do grupo",
+      "keywords": [
+        "configuracoes",
+        "mensagens",
+        "alteracoes",
+        "controle"
+      ]
+    },
+    {
+      "id": "ativar/desativar-mensagens-temporarias",
+      "source": "native",
+      "category": "Group Controller",
+      "type": "endpoint",
+      "name": "Ativar/Desativar Mensagens Temporárias",
+      "summary": "Configura tempo de expiração das mensagens",
+      "keywords": [
+        "temporarias",
+        "expiracao",
+        "desaparecer",
+        "tempo"
+      ]
+    },
+    {
+      "id": "sair-do-grupo",
+      "source": "native",
+      "category": "Group Controller",
+      "type": "endpoint",
+      "name": "Sair do Grupo",
+      "summary": "Remove a instância de um grupo",
+      "keywords": [
+        "sair",
+        "deixar",
+        "remover",
+        "grupo"
+      ]
+    },
+    {
+      "id": "criar-bot",
+      "source": "native",
+      "category": "Evolution Bot",
+      "type": "endpoint",
+      "name": "Criar Bot",
+      "summary": "Configura novo bot automatizado para a instância",
+      "keywords": [
+        "bot",
+        "automatizado",
+        "triggers",
+        "respostas"
+      ]
+    },
+    {
+      "id": "buscar-bot",
+      "source": "native",
+      "category": "Evolution Bot",
+      "type": "endpoint",
+      "name": "Buscar Bot",
+      "summary": "Lista bots configurados para a instância",
+      "keywords": [
+        "bot",
+        "lista",
+        "configurados",
+        "ativos"
+      ]
+    },
+    {
+      "id": "buscar-bot-especifico",
+      "source": "native",
+      "category": "Evolution Bot",
+      "type": "endpoint",
+      "name": "Buscar Bot Específico",
+      "summary": "Obtém detalhes de um bot específico",
+      "keywords": [
+        "bot",
+        "detalhes",
+        "configuracoes",
+        "especifico"
+      ]
+    },
+    {
+      "id": "atualizar-bot",
+      "source": "native",
+      "category": "Evolution Bot",
+      "type": "endpoint",
+      "name": "Atualizar Bot",
+      "summary": "Modifica configurações de bot existente",
+      "keywords": [
+        "bot",
+        "atualizar",
+        "modificar",
+        "parametros"
+      ]
+    },
+    {
+      "id": "deletar-bot",
+      "source": "native",
+      "category": "Evolution Bot",
+      "type": "endpoint",
+      "name": "Deletar Bot",
+      "summary": "Remove bot da instância",
+      "keywords": [
+        "bot",
+        "deletar",
+        "remover",
+        "excluir"
+      ]
+    },
+    {
+      "id": "configuracoes-do-bot",
+      "source": "native",
+      "category": "Evolution Bot",
+      "type": "endpoint",
+      "name": "Configurações do Bot",
+      "summary": "Define configurações globais para todos os bots",
+      "keywords": [
+        "configuracoes",
+        "globais",
+        "fallback",
+        "timeouts"
+      ]
+    },
+    {
+      "id": "buscar-configuracoes",
+      "source": "native",
+      "category": "Evolution Bot",
+      "type": "endpoint",
+      "name": "Buscar Configurações",
+      "summary": "Consulta configurações globais dos bots",
+      "keywords": [
+        "configuracoes",
+        "globais",
+        "consultar",
+        "sistema"
+      ]
+    },
+    {
+      "id": "alterar-status",
+      "source": "native",
+      "category": "Evolution Bot",
+      "type": "endpoint",
+      "name": "Alterar Status",
+      "summary": "Modifica status de sessão específica do bot",
+      "keywords": [
+        "status",
+        "sessao",
+        "conversa",
+        "estado"
+      ]
+    },
+    {
+      "id": "buscar-sessoes",
+      "source": "native",
+      "category": "Evolution Bot",
+      "type": "endpoint",
+      "name": "Buscar Sessões",
+      "summary": "Lista sessões ativas de um bot específico",
+      "keywords": [
+        "sessoes",
+        "ativas",
+        "conversas",
+        "monitoramento"
+      ]
+    },
+    {
+      "id": "configurar-websocket",
+      "source": "native",
+      "category": "Websocket",
+      "type": "endpoint",
+      "name": "Configurar Websocket",
+      "summary": "Ativa e configura conexão WebSocket para a instância",
+      "keywords": [
+        "websocket",
+        "tempo-real",
+        "eventos",
+        "conexao"
+      ]
+    },
+    {
+      "id": "buscar-configuracoes-websocket",
+      "source": "native",
+      "category": "Websocket",
+      "type": "endpoint",
+      "name": "Buscar Configurações Websocket",
+      "summary": "Consulta configurações atuais do WebSocket",
+      "keywords": [
+        "websocket",
+        "configuracoes",
+        "status",
+        "eventos"
+      ]
+    },
+    {
+      "id": "configurar-sqs",
+      "source": "native",
+      "category": "Integrações",
+      "type": "endpoint",
+      "name": "Configurar SQS",
+      "summary": "Ativa integração com Amazon Simple Queue Service",
+      "keywords": [
+        "sqs",
+        "amazon",
+        "fila",
+        "integracao"
+      ]
+    },
+    {
+      "id": "buscar-configuracoes-sqs",
+      "source": "native",
+      "category": "Integrações",
+      "type": "endpoint",
+      "name": "Buscar Configurações SQS",
+      "summary": "Consulta configurações atuais do Amazon SQS",
+      "keywords": [
+        "sqs",
+        "configuracoes",
+        "amazon",
+        "status"
+      ]
+    },
+    {
+      "id": "configurar-rabbitmq",
+      "source": "native",
+      "category": "Integrações",
+      "type": "endpoint",
+      "name": "Configurar RabbitMQ",
+      "summary": "Ativa integração com RabbitMQ",
+      "keywords": [
+        "rabbitmq",
+        "fila",
+        "distribuido",
+        "integracao"
+      ]
+    },
+    {
+      "id": "buscar-configuracoes-rabbitmq",
+      "source": "native",
+      "category": "Integrações",
+      "type": "endpoint",
+      "name": "Buscar Configurações RabbitMQ",
+      "summary": "Consulta configurações atuais do RabbitMQ",
+      "keywords": [
+        "rabbitmq",
+        "configuracoes",
+        "status",
+        "eventos"
+      ]
+    },
+    {
+      "id": "criar-instancia",
+      "source": "custom",
+      "category": "Instance Management - Basic",
+      "type": "endpoint",
+      "name": "Criar Instância",
+      "summary": "Cria uma nova instância WhatsApp com configurações avançadas de filtros",
+      "keywords": [
+        "instancia",
+        "criar",
+        "filtros",
+        "webhook",
+        "conexao"
+      ]
+    },
+    {
+      "id": "listar-instancias",
+      "source": "custom",
+      "category": "Instance Management - Basic",
+      "type": "endpoint",
+      "name": "Listar Instâncias",
+      "summary": "Lista todas as instâncias criadas no servidor",
+      "keywords": [
+        "instancias",
+        "listar",
+        "status",
+        "monitorar"
+      ]
+    },
+    {
+      "id": "conectar-instancia",
+      "source": "custom",
+      "category": "Instance Management - Basic",
+      "type": "endpoint",
+      "name": "Conectar Instância",
+      "summary": "Conecta uma instância desconectada e gera novo QR Code",
+      "keywords": [
+        "conectar",
+        "qrcode",
+        "reconectar",
+        "login"
+      ]
+    },
+    {
+      "id": "reiniciar-instancia",
+      "source": "custom",
+      "category": "Instance Management - Basic",
+      "type": "endpoint",
+      "name": "Reiniciar Instância",
+      "summary": "Reinicia uma instância específica",
+      "keywords": [
+        "reiniciar",
+        "resolver",
+        "travamentos",
+        "configuracao"
+      ]
+    },
+    {
+      "id": "estado-da-conexao",
+      "source": "custom",
+      "category": "Instance Management - Basic",
+      "type": "endpoint",
+      "name": "Estado da Conexão",
+      "summary": "Verifica o estado atual da conexão de uma instância",
+      "keywords": [
+        "estado",
+        "conexao",
+        "monitoramento",
+        "saude"
+      ]
+    },
+    {
+      "id": "logout-da-instancia",
+      "source": "custom",
+      "category": "Instance Management - Basic",
+      "type": "endpoint",
+      "name": "Logout da Instância",
+      "summary": "Faz logout da instância, mantendo configurações",
+      "keywords": [
+        "logout",
+        "desconectar",
+        "temporario",
+        "manutencao"
+      ]
+    },
+    {
+      "id": "deletar-instancia",
+      "source": "custom",
+      "category": "Instance Management - Basic",
+      "type": "endpoint",
+      "name": "Deletar Instância",
+      "summary": "Remove completamente uma instância e todas suas configurações",
+      "keywords": [
+        "deletar",
+        "remover",
+        "irreversivel",
+        "limpeza"
+      ]
+    },
+    {
+      "id": "definir-presenca",
+      "source": "custom",
+      "category": "Instance Management - Basic",
+      "type": "endpoint",
+      "name": "Definir Presença",
+      "summary": "Define o status de presença da instância no WhatsApp",
+      "keywords": [
+        "presenca",
+        "online",
+        "disponibilidade",
+        "humano"
+      ]
+    },
+    {
+      "id": "consultar-filtros",
+      "source": "custom",
+      "category": "Instance Management - Advanced",
+      "type": "endpoint",
+      "name": "Consultar Filtros",
+      "summary": "Consulta todos os filtros de mensagem configurados para uma instância",
+      "keywords": [
+        "filtros",
+        "consultar",
+        "debug",
+        "auditoria"
+      ]
+    },
+    {
+      "id": "atualizar-filtros",
+      "source": "custom",
+      "category": "Instance Management - Advanced",
+      "type": "endpoint",
+      "name": "Atualizar Filtros",
+      "summary": "Atualiza os filtros de uma instância existente",
+      "keywords": [
+        "filtros",
+        "atualizar",
+        "regras",
+        "otimizacao",
+        "configurar",
+        "tipo",
+        "arquivo",
+        "extensao",
+        "formato",
+        "jpg",
+        "pdf",
+        "mp4",
+        "imagem",
+        "video",
+        "documento",
+        "bloquear",
+        "permitir",
+        "palavra-chave",
+        "texto",
+        "conteudo"
+      ]
+    },
+    {
+      "id": "consultar-filtros-de-audio",
+      "source": "custom",
+      "category": "Instance Management - Advanced",
+      "type": "endpoint",
+      "name": "Consultar Filtros de Áudio",
+      "summary": "Consulta configurações específicas dos filtros de áudio",
+      "keywords": [
+        "audio",
+        "filtros",
+        "duracao",
+        "processamento",
+        "verificar",
+        "listar",
+        "segundos",
+        "minutos",
+        "tempo",
+        "limite",
+        "tamanho",
+        "size",
+        "configuracoes",
+        "status"
+      ]
+    },
+    {
+      "id": "atualizar-filtros-de-audio",
+      "source": "custom",
+      "category": "Instance Management - Advanced",
+      "type": "endpoint",
+      "name": "Atualizar Filtros de Áudio",
+      "summary": "Atualiza apenas as configurações de filtros de áudio",
+      "keywords": [
+        "audio",
+        "filtros",
+        "duracao",
+        "feedback",
+        "configurar",
+        "limite",
+        "segundos",
+        "minutos",
+        "tempo",
+        "bloquear",
+        "restringir",
+        "maior",
+        "menor",
+        "tamanho",
+        "size",
+        "longos",
+        "grandes",
+        "rejeitar"
+      ]
+    },
+    {
+      "id": "estatisticas-de-filtros-de-audio",
+      "source": "custom",
+      "category": "Instance Management - Advanced",
+      "type": "endpoint",
+      "name": "Estatísticas de Filtros de Áudio",
+      "summary": "Estatísticas detalhadas dos filtros de áudio aplicados",
+      "keywords": [
+        "estatisticas",
+        "audio",
+        "efetividade",
+        "padroes"
+      ]
+    },
+    {
+      "id": "resetar-estatisticas-de-audio",
+      "source": "custom",
+      "category": "Instance Management - Advanced",
+      "type": "endpoint",
+      "name": "Resetar Estatísticas de Áudio",
+      "summary": "Zera as estatísticas de filtros de áudio",
+      "keywords": [
+        "resetar",
+        "estatisticas",
+        "audio",
+        "periodo"
+      ]
+    },
+    {
+      "id": "duplicar-instancia",
+      "source": "custom",
+      "category": "Instance Management - Advanced",
+      "type": "endpoint",
+      "name": "Duplicar Instância",
+      "summary": "Duplica uma instância existente com todas as configurações",
+      "keywords": [
+        "duplicar",
+        "clonar",
+        "configuracoes",
+        "backup"
+      ]
+    },
+    {
+      "id": "metricas-da-instancia",
+      "source": "custom",
+      "category": "Instance Management - Advanced",
+      "type": "endpoint",
+      "name": "Métricas da Instância",
+      "summary": "Métricas detalhadas de performance e uso da instância",
+      "keywords": [
+        "metricas",
+        "performance",
+        "uso",
+        "recursos"
+      ]
+    },
+    {
+      "id": "estatisticas-da-fila",
+      "source": "custom",
+      "category": "Global Queue System",
+      "type": "endpoint",
+      "name": "Estatísticas da Fila",
+      "summary": "Estatísticas em tempo real da fila global de processamento",
+      "keywords": [
+        "fila",
+        "estatisticas",
+        "rate-limiting",
+        "performance"
+      ]
+    },
+    {
+      "id": "metricas-da-fila",
+      "source": "custom",
+      "category": "Global Queue System",
+      "type": "endpoint",
+      "name": "Métricas da Fila",
+      "summary": "Métricas avançadas e históricas da fila global",
+      "keywords": [
+        "metricas",
+        "historicas",
+        "erros",
+        "instancia"
+      ]
+    },
+    {
+      "id": "resetar-metricas-da-fila",
+      "source": "custom",
+      "category": "Global Queue System",
+      "type": "endpoint",
+      "name": "Resetar Métricas da Fila",
+      "summary": "Reseta todas as métricas da fila global",
+      "keywords": [
+        "resetar",
+        "metricas",
+        "fila",
+        "manutencao"
+      ]
+    },
+    {
+      "id": "saude-dos-webhooks",
+      "source": "custom",
+      "category": "Dual Webhook System - Health",
+      "type": "endpoint",
+      "name": "Saúde dos Webhooks",
+      "summary": "Verifica a saúde geral do sistema de webhooks",
+      "keywords": [
+        "saude",
+        "webhooks",
+        "monitoramento",
+        "alertas"
+      ]
+    },
+    {
+      "id": "metricas-dos-webhooks",
+      "source": "custom",
+      "category": "Dual Webhook System - Health",
+      "type": "endpoint",
+      "name": "Métricas dos Webhooks",
+      "summary": "Estatísticas detalhadas de todos os webhooks",
+      "keywords": [
+        "metricas",
+        "webhooks",
+        "performance",
+        "entrega"
+      ]
+    },
+    {
+      "id": "consultar-logs",
+      "source": "custom",
+      "category": "Dual Webhook System - Logs",
+      "type": "endpoint",
+      "name": "Consultar Logs",
+      "summary": "Consulta logs recentes de webhooks com filtros",
+      "keywords": [
+        "logs",
+        "auditoria",
+        "debug",
+        "eventos"
+      ]
+    },
+    {
+      "id": "exportar-logs",
+      "source": "custom",
+      "category": "Dual Webhook System - Logs",
+      "type": "endpoint",
+      "name": "Exportar Logs",
+      "summary": "Exporta todos os logs em formato JSON ou CSV",
+      "keywords": [
+        "exportar",
+        "logs",
+        "backup",
+        "compliance"
+      ]
+    },
+    {
+      "id": "limpar-logs",
+      "source": "custom",
+      "category": "Dual Webhook System - Logs",
+      "type": "endpoint",
+      "name": "Limpar Logs",
+      "summary": "Limpa todos os logs e métricas de webhooks",
+      "keywords": [
+        "limpar",
+        "logs",
+        "manutencao",
+        "reset"
+      ]
+    },
+    {
+      "id": "listar-falhas",
+      "source": "custom",
+      "category": "Dual Webhook System - Retry",
+      "type": "endpoint",
+      "name": "Listar Falhas",
+      "summary": "Lista webhooks que falharam e estão aguardando retry",
+      "keywords": [
+        "falhas",
+        "retry",
+        "pendentes",
+        "tentativas"
+      ]
+    },
+    {
+      "id": "remover-falha-especifica",
+      "source": "custom",
+      "category": "Dual Webhook System - Retry",
+      "type": "endpoint",
+      "name": "Remover Falha Específica",
+      "summary": "Remove um webhook específico da fila de retry",
+      "keywords": [
+        "remover",
+        "falha",
+        "especifica",
+        "cancelar"
+      ]
+    },
+    {
+      "id": "limpar-todas-as-falhas",
+      "source": "custom",
+      "category": "Dual Webhook System - Retry",
+      "type": "endpoint",
+      "name": "Limpar Todas as Falhas",
+      "summary": "Limpa todos os webhooks falhados da fila de retry",
+      "keywords": [
+        "limpar",
+        "falhas",
+        "massa",
+        "infraestrutura"
+      ]
+    },
+    {
+      "id": "testar-webhook",
+      "source": "custom",
+      "category": "Dual Webhook System - Testing",
+      "type": "endpoint",
+      "name": "Testar Webhook",
+      "summary": "Testa conectividade com um webhook específico",
+      "keywords": [
+        "testar",
+        "conectividade",
+        "validar",
+        "diagnostico"
+      ]
+    },
+    {
+      "id": "consultar-configuracao-global",
+      "source": "custom",
+      "category": "Global Webhook Configuration",
+      "type": "endpoint",
+      "name": "Consultar Configuração Global",
+      "summary": "Consulta a configuração atual dos webhooks globais",
+      "keywords": [
+        "configuracao",
+        "global",
+        "webhooks",
+        "auditoria"
+      ]
+    },
+    {
+      "id": "criar/atualizar-configuracao-global",
+      "source": "custom",
+      "category": "Global Webhook Configuration",
+      "type": "endpoint",
+      "name": "Criar/Atualizar Configuração Global",
+      "summary": "Cria ou atualiza a configuração global de webhooks",
+      "keywords": [
+        "criar",
+        "atualizar",
+        "configuracao",
+        "global"
+      ]
+    },
+    {
+      "id": "desabilitar-configuracao-global",
+      "source": "custom",
+      "category": "Global Webhook Configuration",
+      "type": "endpoint",
+      "name": "Desabilitar Configuração Global",
+      "summary": "Desabilita todos os webhooks globais, mantendo configurações",
+      "keywords": [
+        "desabilitar",
+        "temporario",
+        "manutencao",
+        "problemas"
+      ]
+    },
+    {
+      "id": "testar-configuracao-global",
+      "source": "custom",
+      "category": "Global Webhook Configuration",
+      "type": "endpoint",
+      "name": "Testar Configuração Global",
+      "summary": "Testa conectividade de webhook antes de salvar configuração",
+      "keywords": [
+        "testar",
+        "validar",
+        "autenticacao",
+        "funcionamento"
+      ]
+    },
+    {
+      "id": "iniciar-processamento",
+      "source": "custom",
+      "category": "Processing Feedback System",
+      "type": "endpoint",
+      "name": "Iniciar Processamento",
+      "summary": "Inicia feedback visual com reactions alternadas durante processamento",
+      "keywords": [
+        "processamento",
+        "feedback",
+        "visual",
+        "reactions"
+      ]
+    },
+    {
+      "id": "finalizar-processamento",
+      "source": "custom",
+      "category": "Processing Feedback System",
+      "type": "endpoint",
+      "name": "Finalizar Processamento",
+      "summary": "Finaliza o processamento com resultado e reaction final",
+      "keywords": [
+        "finalizar",
+        "resultado",
+        "concluir",
+        "reaction"
+      ]
+    },
+    {
+      "id": "status-do-processamento",
+      "source": "custom",
+      "category": "Processing Feedback System",
+      "type": "endpoint",
+      "name": "Status do Processamento",
+      "summary": "Monitora todas as sessões ativas de processamento",
+      "keywords": [
+        "status",
+        "sessoes",
+        "ativas",
+        "monitoramento"
+      ]
+    },
+    {
+      "id": "limpar-sessao",
+      "source": "custom",
+      "category": "Processing Feedback System",
+      "type": "endpoint",
+      "name": "Limpar Sessão",
+      "summary": "Força limpeza de uma sessão específica (admin/debug)",
+      "keywords": [
+        "limpar",
+        "sessao",
+        "forcado",
+        "debug"
+      ]
+    },
+    {
+      "id": "consultar-agendamento",
+      "source": "custom",
+      "category": "S3 Cleanup System",
+      "type": "endpoint",
+      "name": "Consultar Agendamento",
+      "summary": "Consulta o agendamento atual do cleanup automático",
+      "keywords": [
+        "agendamento",
+        "cleanup",
+        "retencao",
+        "armazenamento"
+      ]
+    },
+    {
+      "id": "atualizar-agendamento",
+      "source": "custom",
+      "category": "S3 Cleanup System",
+      "type": "endpoint",
+      "name": "Atualizar Agendamento",
+      "summary": "Atualiza a configuração do cleanup automático",
+      "keywords": [
+        "atualizar",
+        "agendamento",
+        "horario",
+        "retencao"
+      ]
+    },
+    {
+      "id": "executar-cleanup-manual",
+      "source": "custom",
+      "category": "S3 Cleanup System",
+      "type": "endpoint",
+      "name": "Executar Cleanup Manual",
+      "summary": "Executa cleanup manual imediato",
+      "keywords": [
+        "executar",
+        "manual",
+        "imediato",
+        "espaco"
+      ]
+    },
+    {
+      "id": "status-do-cleanup",
+      "source": "custom",
+      "category": "S3 Cleanup System",
+      "type": "endpoint",
+      "name": "Status do Cleanup",
+      "summary": "Status detalhado e próxima execução do cleanup",
+      "keywords": [
+        "status",
+        "cleanup",
+        "execucao",
+        "storage"
+      ]
+    }
+  ],
+  "webhooks": [
+    {
+      "id": "webhook-principal",
+      "source": "custom",
+      "category": "Webhook Payloads",
+      "type": "webhook",
+      "name": "Webhook Principal",
+      "summary": "Payload para webhook principal contendo dados de negócio",
+      "keywords": [
+        "webhook",
+        "principal",
+        "mensagens",
+        "usuario",
+        "midia"
+      ]
+    },
+    {
+      "id": "webhook-monitoramento",
+      "source": "custom",
+      "category": "Webhook Payloads",
+      "type": "webhook",
+      "name": "Webhook Monitoramento",
+      "summary": "Payload para webhook de monitoramento contendo erros e estatísticas",
+      "keywords": [
+        "webhook",
+        "monitoramento",
+        "alertas",
+        "estatisticas",
+        "erros"
+      ]
+    }
+  ]
+}

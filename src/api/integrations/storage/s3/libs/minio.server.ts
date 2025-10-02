@@ -26,7 +26,7 @@ const minioClient = (() => {
   }
 })();
 
-const bucketName = process.env.S3_BUCKET;
+const bucketName = BUCKET?.BUCKET_NAME || process.env.S3_BUCKET;
 
 const bucketExists = async () => {
   if (minioClient) {
@@ -76,7 +76,10 @@ const createBucket = async () => {
   }
 };
 
-createBucket();
+// Só tenta criar bucket se S3 estiver habilitado
+if (BUCKET?.ENABLE) {
+  createBucket();
+}
 
 const uploadFile = async (fileName: string, file: Buffer | Transform | Readable, size: number, metadata: Metadata) => {
   if (minioClient) {
@@ -136,4 +139,46 @@ const deleteFile = async (folder: string, fileName: string) => {
   }
 };
 
-export { BUCKET, deleteFile, getObjectUrl, uploadFile, uploadTempFile };
+const cleanupOldAudioFiles = async (maxAgeInDays: number) => {
+  if (!minioClient) {
+    logger.error('MinIO client not available for cleanup');
+    return { success: false, error: 'MinIO client not available' };
+  }
+
+  try {
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - maxAgeInDays);
+
+    const stream = minioClient.listObjectsV2(bucketName, 'evolution-api/', true);
+    let deletedCount = 0;
+    let errorCount = 0;
+
+    for await (const obj of stream) {
+      // Only process audio files
+      if (obj.name && obj.name.includes('/audio/') && obj.lastModified && obj.lastModified < cutoffDate) {
+        try {
+          await minioClient.removeObject(bucketName, obj.name);
+          deletedCount++;
+          logger.verbose(`Deleted old audio file: ${obj.name}`);
+        } catch (error) {
+          errorCount++;
+          logger.error(`Failed to delete audio file ${obj.name}: ${error.message}`);
+        }
+      }
+    }
+
+    logger.info(`Audio cleanup completed: ${deletedCount} files deleted, ${errorCount} errors`);
+    return {
+      success: true,
+      deletedCount,
+      errorCount,
+      cutoffDate: cutoffDate.toISOString()
+    };
+
+  } catch (error) {
+    logger.error(`Audio cleanup failed: ${error.message}`);
+    return { success: false, error: error.message };
+  }
+};
+
+export { BUCKET, deleteFile, getObjectUrl, uploadFile, uploadTempFile, cleanupOldAudioFiles };

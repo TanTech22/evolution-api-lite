@@ -9,6 +9,7 @@ import { eventManager, waMonitor } from '@api/server.module';
 import { Auth, configService, Cors, HttpServer, ProviderSession, Webhook } from '@config/env.config';
 import { onUnexpectedError } from '@config/error.config';
 import { Logger } from '@config/logger.config';
+import { s3CleanupScheduler } from '@api/services/s3-cleanup-scheduler.service';
 import { ROOT_DIR } from '@config/path.config';
 import * as Sentry from '@sentry/node';
 import { ServerUP } from '@utils/server-up';
@@ -143,6 +144,10 @@ async function bootstrap() {
   server.listen(httpServer.PORT, () => logger.log(httpServer.TYPE.toUpperCase() + ' - ON: ' + httpServer.PORT));
 
   initWA();
+
+  // Initialize S3 cleanup scheduler
+  await s3CleanupScheduler.initialize();
+  logger.info('S3 Cleanup Scheduler - Initialized');
 
   onUnexpectedError();
 }

@@ -232,6 +232,24 @@ export class WAMonitoringService {
           businessId: data.businessId,
         },
       });
+
+      // Create audio filter record with defaults from environment or request
+      const audioFilterConfig = this.configService.get<any>('AUDIO_FILTER');
+      const audioFilterData = {
+        instanceName: data.instanceName,
+        enabled: data.audioFilters?.enabled ?? audioFilterConfig?.ENABLED ?? true,
+        minDurationSeconds: data.audioFilters?.minDurationSeconds ?? audioFilterConfig?.MIN_DURATION ?? 3,
+        maxDurationSeconds: data.audioFilters?.maxDurationSeconds ?? audioFilterConfig?.MAX_DURATION ?? 300,
+        replyToOversizeAudio: data.audioFilters?.replyToOversizeAudio ?? audioFilterConfig?.REPLY_TO_OVERSIZE ?? true,
+        oversizeReaction: data.audioFilters?.oversizeReaction ?? audioFilterConfig?.OVERSIZE_REACTION ?? "⸘",
+      };
+
+      await this.prismaRepository.instanceAudioFilter.create({
+        data: audioFilterData,
+      }).catch((err) => {
+        // Log but don't fail instance creation if audio filter creation fails
+        this.logger.warn(`Failed to create audio filter for instance ${data.instanceName}: ${err.message}`);
+      });
     } catch (error) {
       this.logger.error(error);
     }

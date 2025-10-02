@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste QR Code - Evolution API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .qr-code {
+            max-width: 300px;
+            height: auto;
+            border: 3px solid #667eea;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .loading {
+            color: #667eea;
+            font-size: 1.2rem;
+            margin: 20px 0;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Teste QR Code Mock</h1>
+        <div class="loading" id="loading">Carregando QR Code...</div>
+        <img id="qrCode" class="qr-code" style="display: none;" alt="QR Code Test">
+        <div id="info">
+            <p><strong>Instância:</strong> celular-55119</p>
+            <p><strong>Número:</strong> 5511934593575</p>
+        </div>
+    </div>
+
+    <script>
+        const mockQRCode = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADIAQAAAACFI5MzAAABGUlEQVR42u2YSw7DIAxEzYpjcFM+N+UYrErtMUkjpd2WWQQlyudtLI89JpH5a8lDHvJnUkVXmkMPKcMeAg1peo70inrpRbm/ISFDwkhNX4NUSWxEo26WVFKisgc2ArWncSO3OthJvEs0nTju/bOT+NJKzJK++c5OovJWRIob2AwNsf6YXWJ3eFGbgXS4skgEGafaDGSifVONS/Zົ້າ/Q2YI5l8BdSS0ImwtTezehjiM9C3FG8fbVdykft/URTeEY918hlIZZFC9Yq0Rw6ns63nyxXtkTCYK6VuJv4NKvmMdgFMBHfBbRjb8JFxgoWW04RPmKfEaY2pgcZcT/OsL3GQ5baFrUN23iZZrvJ6pKjDJFXFvL8P3jIfvIGvNX7jsCaJvEAAAAASUVORK5CYII=';
+
+        function loadQRCode() {
+            const loadingEl = document.getElementById('loading');
+            const qrCodeEl = document.getElementById('qrCode');
+
+            console.log('Carregando QR Code Mock...');
+
+            // Simular carregamento
+            setTimeout(() => {
+                try {
+                    qrCodeEl.src = mockQRCode;
+                    qrCodeEl.style.display = 'block';
+                    loadingEl.style.display = 'none';
+                    console.log('QR Code Mock carregado com sucesso!');
+                } catch (error) {
+                    console.error('Erro ao carregar QR Code:', error);
+                    loadingEl.textContent = 'Erro ao carregar QR Code';
+                    loadingEl.style.color = 'red';
+                }
+            }, 1000);
+        }
+
+        // Carregar quando a página estiver pronta
+        document.addEventListener('DOMContentLoaded', loadQRCode);
+    </script>
+</body>
+</html>

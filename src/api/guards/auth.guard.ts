@@ -8,7 +8,14 @@ import { NextFunction, Request, Response } from 'express';
 const logger = new Logger('GUARD');
 
 async function apikey(req: Request, _: Response, next: NextFunction) {
-  const env = configService.get<Auth>('AUTHENTICATION').API_KEY;
+  const authConfig = configService.get<Auth>('AUTHENTICATION');
+
+  // Se autenticação está desabilitada, passa direto
+  if (!authConfig.ENABLED) {
+    return next();
+  }
+
+  const env = authConfig.API_KEY;
   const key = req.get('apikey');
   const db = configService.get<Database>('DATABASE');
 

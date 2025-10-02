@@ -1,0 +1,84 @@
+{
+  "test_configuration": {
+    "server": {
+      "url": "http://195.35.17.156:8080",
+      "api_key": "BQYHJGJHJ",
+      "test_instance": "5511930670388"
+    },
+    "webhook_receiver": {
+      "url": "http://195.35.17.156:3000",
+      "port": 3000,
+      "endpoints": {
+        "principal": "/webhook/principal",
+        "monitor": "/webhook/monitor",
+        "test": "/webhook/test",
+        "status": "/status"
+      }
+    },
+    "test_phases": {
+      "phase_1": {
+        "name": "Testes Básicos",
+        "endpoints": 3,
+        "risk_level": "ZERO",
+        "description": "Conectividade básica e endpoints seguros"
+      },
+      "phase_2": {
+        "name": "Endpoints Nativos",
+        "endpoints": 66,
+        "risk_level": "BAIXO",
+        "description": "Funcionalidades nativas da Evolution API"
+      },
+      "phase_3": {
+        "name": "Endpoints Custom",
+        "endpoints": 42,
+        "risk_level": "MÉDIO",
+        "description": "Funcionalidades customizadas e avançadas"
+      },
+      "phase_4": {
+        "name": "Webhooks",
+        "endpoints": 2,
+        "risk_level": "BAIXO",
+        "description": "Validação de webhooks e callbacks"
+      }
+    },
+    "monitoring": {
+      "api_logs": {
+        "enabled": true,
+        "script": "./monitoramento/monitor-api-logs.sh"
+      },
+      "webhooks": {
+        "enabled": true,
+        "script": "./monitoramento/monitor-webhooks.sh"
+      },
+      "database": {
+        "enabled": true,
+        "script": "./monitoramento/monitor-database.sh"
+      },
+      "performance": {
+        "enabled": true,
+        "script": "./monitoramento/monitor-performance.sh"
+      }
+    },
+    "timeouts": {
+      "connection_timeout": 10,
+      "read_timeout": 30,
+      "between_tests": 1,
+      "between_phases": 5
+    },
+    "expected_responses": {
+      "fetchInstances": "[]",
+      "api_status": "200",
+      "connectionState": "{\"instance\":{\"state\":\"close\"}}"
+    }
+  },
+  "environment": {
+    "required_tools": ["curl", "bc", "netstat", "lsof", "sqlite3", "node"],
+    "optional_tools": ["jq", "htop", "iotop"],
+    "directories": {
+      "logs": "./resultados/logs",
+      "reports": "./resultados/reports",
+      "scripts": "./scripts",
+      "monitoring": "./monitoramento"
+    }
+  }
+}

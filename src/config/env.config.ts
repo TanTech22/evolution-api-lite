@@ -184,6 +184,7 @@ export type EventsPusher = {
 export type ApiKey = { KEY: string };
 
 export type Auth = {
+  ENABLED: boolean;
   API_KEY: ApiKey;
   EXPOSE_IN_FETCH_INSTANCES: boolean;
 };
@@ -250,6 +251,33 @@ export type S3 = {
   PORT?: number;
   USE_SSL?: boolean;
   REGION?: string;
+  AUDIO_URL_EXPIRY?: number;
+  CLEANUP_ENABLED?: boolean;
+  CLEANUP_DAYS?: number;
+};
+
+export type GlobalQueue = {
+  ENABLED: boolean;
+  RATE_LIMIT: number;
+  RATE_INTERVAL: number;
+  TOKEN_BUCKET: {
+    CAPACITY: number;
+    REFILL_RATE: number;
+    REFILL_INTERVAL: number;
+  };
+  MONITORING_WEBHOOK?: {
+    URL: string;
+    ENABLED: boolean;
+  };
+};
+
+export type AudioFilter = {
+  ENABLED: boolean;
+  MIN_DURATION: number;
+  MAX_DURATION: number;
+  REPLY_TO_OVERSIZE: boolean;
+  OVERSIZE_REACTION: string;
+  OVERSIZE_MESSAGE: string;
 };
 
 export type CacheConf = { REDIS: CacheConfRedis; LOCAL: CacheConfLocal };
@@ -279,6 +307,8 @@ export interface Env {
   DIFY: Dify;
   CACHE: CacheConf;
   S3?: S3;
+  GLOBAL_QUEUE: GlobalQueue;
+  AUDIO_FILTER: AudioFilter;
   AUTHENTICATION: Auth;
   PRODUCTION?: Production;
 }
@@ -553,10 +583,36 @@ export class ConfigService {
         PORT: Number.parseInt(process.env?.S3_PORT || '9000'),
         USE_SSL: process.env?.S3_USE_SSL === 'true',
         REGION: process.env?.S3_REGION,
+        AUDIO_URL_EXPIRY: Number.parseInt(process.env?.S3_AUDIO_URL_EXPIRY) || 3600, // 1 hour default
+        CLEANUP_ENABLED: process.env?.S3_CLEANUP_ENABLED === 'true',
+        CLEANUP_DAYS: Number.parseInt(process.env?.S3_CLEANUP_DAYS) || 1, // 1 day default
+      },
+      GLOBAL_QUEUE: {
+        ENABLED: process.env?.GLOBAL_QUEUE_ENABLED === 'true',
+        RATE_LIMIT: Number.parseInt(process.env?.GLOBAL_QUEUE_RATE_LIMIT) || 500,
+        RATE_INTERVAL: Number.parseInt(process.env?.GLOBAL_QUEUE_RATE_INTERVAL) || 60000,
+        TOKEN_BUCKET: {
+          CAPACITY: Number.parseInt(process.env?.TOKEN_BUCKET_CAPACITY) || 500,
+          REFILL_RATE: Number.parseInt(process.env?.TOKEN_BUCKET_REFILL_RATE) || 500,
+          REFILL_INTERVAL: Number.parseInt(process.env?.TOKEN_BUCKET_REFILL_INTERVAL) || 60000,
+        },
+        MONITORING_WEBHOOK: {
+          URL: process.env?.WEBHOOK_MONITORING_URL || '',
+          ENABLED: process.env?.WEBHOOK_MONITORING_ENABLED === 'true',
+        },
+      },
+      AUDIO_FILTER: {
+        ENABLED: process.env?.AUDIO_FILTER_ENABLED !== 'false',
+        MIN_DURATION: Number.parseInt(process.env?.AUDIO_FILTER_DEFAULT_MIN_SECONDS) || 3,
+        MAX_DURATION: Number.parseInt(process.env?.AUDIO_FILTER_DEFAULT_MAX_SECONDS) || 7200,
+        REPLY_TO_OVERSIZE: process.env?.AUDIO_FILTER_REPLY_TO_OVERSIZE === 'true',
+        OVERSIZE_REACTION: process.env?.AUDIO_FILTER_OVERSIZE_REACTION || '\u2758',
+        OVERSIZE_MESSAGE: process.env?.AUDIO_FILTER_OVERSIZE_MESSAGE || 'Áudio acima do limite de 2 horas',
       },
       AUTHENTICATION: {
+        ENABLED: process.env?.AUTHENTICATION_API_KEY_ENABLED !== 'false',
         API_KEY: {
-          KEY: process.env.AUTHENTICATION_API_KEY || 'BQYHJGJHJ',
+          KEY: process.env.AUTHENTICATION_API_KEY_KEY || 'BQYHJGJHJ',
         },
         EXPOSE_IN_FETCH_INSTANCES: process.env?.AUTHENTICATION_EXPOSE_IN_FETCH_INSTANCES === 'true',
       },

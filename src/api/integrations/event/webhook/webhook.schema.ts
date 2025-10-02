@@ -22,6 +22,23 @@ const isNotEmpty = (...propertyNames: string[]): JSONSchema7 => {
   };
 };
 
+const messageTypesList = [
+  'conversation',
+  'extendedTextMessage',
+  'audioMessage',
+  'imageMessage',
+  'videoMessage',
+  'documentMessage',
+  'contactMessage',
+  'locationMessage',
+  'listResponseMessage',
+  'templateButtonReplyMessage',
+  'viewOnceMessageV2',
+  'documentWithCaptionMessage',
+  'stickerMessage',
+  'ptvMessage'
+];
+
 export const webhookSchema: JSONSchema7 = {
   $id: v4(),
   type: 'object',
@@ -42,6 +59,71 @@ export const webhookSchema: JSONSchema7 = {
             enum: EventController.events,
           },
         },
+        messageTypes: {
+          type: 'array',
+          minItems: 0,
+          items: {
+            type: 'string',
+            enum: messageTypesList,
+          },
+          description: 'Lista de tipos de mensagem permitidos'
+        },
+        excludeMessageTypes: {
+          type: 'array',
+          minItems: 0,
+          items: {
+            type: 'string',
+            enum: messageTypesList,
+          },
+          description: 'Lista de tipos de mensagem excluídos'
+        },
+        textFilters: {
+          type: 'object',
+          properties: {
+            allowedWords: {
+              type: 'array',
+              items: { type: 'string' },
+              description: 'Palavras que devem estar presentes no texto'
+            },
+            blockedWords: {
+              type: 'array',
+              items: { type: 'string' },
+              description: 'Palavras que não podem estar no texto'
+            },
+            allowedPatterns: {
+              type: 'array',
+              items: { type: 'string' },
+              description: 'Padrões regex que o texto deve corresponder'
+            },
+            blockedPatterns: {
+              type: 'array',
+              items: { type: 'string' },
+              description: 'Padrões regex que o texto não pode corresponder'
+            }
+          }
+        },
+        audioProcessing: {
+          type: 'object',
+          properties: {
+            autoDownload: {
+              type: 'boolean',
+              description: 'Download automático de áudios'
+            },
+            maxSizeBytes: {
+              type: 'number',
+              minimum: 0,
+              description: 'Tamanho máximo do áudio em bytes'
+            },
+            oversizeMessage: {
+              type: 'string',
+              description: 'Mensagem enviada quando áudio excede o tamanho'
+            },
+            replyToOversizeAudio: {
+              type: 'boolean',
+              description: 'Enviar resposta automática para áudios grandes'
+            }
+          }
+        }
       },
       required: ['enabled', 'url'],
       ...isNotEmpty('enabled', 'url'),

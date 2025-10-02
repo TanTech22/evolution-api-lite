@@ -105,6 +105,7 @@ model Instance {
   Flowise                 Flowise[]
   FlowiseSetting          FlowiseSetting?
   Pusher                  Pusher?
+  AudioFilter             InstanceAudioFilter?
 }
 
 model Session {
@@ -188,17 +189,21 @@ model MessageUpdate {
 }
 
 model Webhook {
-  id              String    @id @default(cuid())
-  url             String    @db.VarChar(500)
-  headers         Json?     @db.JsonB
-  enabled         Boolean?  @default(true) @db.Boolean
-  events          Json?     @db.JsonB
-  webhookByEvents Boolean?  @default(false) @db.Boolean
-  webhookBase64   Boolean?  @default(false) @db.Boolean
-  createdAt       DateTime? @default(now()) @db.Timestamp
-  updatedAt       DateTime  @updatedAt @db.Timestamp
-  Instance        Instance  @relation(fields: [instanceId], references: [id], onDelete: Cascade)
-  instanceId      String    @unique
+  id                    String    @id @default(cuid())
+  url                   String    @db.VarChar(500)
+  headers               Json?     @db.JsonB
+  enabled               Boolean?  @default(true) @db.Boolean
+  events                Json?     @db.JsonB
+  webhookByEvents       Boolean?  @default(false) @db.Boolean
+  webhookBase64         Boolean?  @default(false) @db.Boolean
+  messageTypes          Json?     @db.JsonB
+  excludeMessageTypes   Json?     @db.JsonB
+  textFilters           Json?     @db.JsonB
+  audioProcessing       Json?     @db.JsonB
+  createdAt             DateTime? @default(now()) @db.Timestamp
+  updatedAt             DateTime  @updatedAt @db.Timestamp
+  Instance              Instance  @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+  instanceId            String    @unique
   @@index([instanceId])
 }
 
@@ -626,4 +631,32 @@ model IsOnWhatsapp {
   jidOptions String
   createdAt  DateTime @default(now()) @db.Timestamp
   updatedAt  DateTime @updatedAt @db.Timestamp
+}
+
+model InstanceAudioFilter {
+  id                  Int      @id @default(autoincrement())
+  instanceName        String   @unique @map("instance_name") @db.VarChar(255)
+  minDurationSeconds  Int      @default(3) @map("min_duration_seconds") @db.Integer
+  maxDurationSeconds  Int      @default(300) @map("max_duration_seconds") @db.Integer
+  enabled             Boolean  @default(true) @db.Boolean
+  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamp
+  updatedAt          DateTime @updatedAt @map("updated_at") @db.Timestamp
+  Instance           Instance @relation(fields: [instanceName], references: [name], onDelete: Cascade)
+
+  @@map("instance_audio_filters")
+  @@index([instanceName])
+}
+
+model GlobalWebhookConfig {
+  id                        Int      @id @default(autoincrement())
+  webhookPrincipalEnabled   Boolean  @default(false) @map("webhook_principal_enabled") @db.Boolean
+  webhookPrincipalUrl       String?  @map("webhook_principal_url") @db.VarChar(500)
+  webhookSecundarioEnabled  Boolean  @default(false) @map("webhook_secundario_enabled") @db.Boolean
+  webhookSecundarioUrl      String?  @map("webhook_secundario_url") @db.VarChar(500)
+  webhookByEvents           Boolean  @default(false) @map("webhook_by_events") @db.Boolean
+  headers                   Json?    @db.JsonB
+  createdAt                 DateTime @default(now()) @map("created_at") @db.Timestamp
+  updatedAt                 DateTime @updatedAt @map("updated_at") @db.Timestamp
+
+  @@map("global_webhook_config")
 }

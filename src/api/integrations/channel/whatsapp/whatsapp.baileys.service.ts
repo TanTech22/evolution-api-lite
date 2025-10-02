@@ -1,4 +1,5 @@
 import { OfferCallDto } from '@api/dto/call.dto';
+import { applyMessageFilter, MessageTypeFilter, defaultMessageFilter } from '@utils/messageFilter';
 import {
   ArchiveChatDto,
   BlockUserDto,
@@ -92,6 +93,7 @@ import makeWASocket, {
   Contact,
   delay,
   DisconnectReason,
+  downloadContentFromMessage,
   downloadMediaMessage,
   fetchLatestBaileysVersion,
   generateWAMessageFromContent,
@@ -172,6 +174,7 @@ export class BaileysStartupService extends ChannelStartupService {
     await this.client?.logout('Log out instance: ' + this.instanceName);
 
     this.client?.ws?.close();
+
 
     const sessionExists = await this.prismaRepository.session.findFirst({
       where: { sessionId: this.instanceId },
@@ -330,6 +333,7 @@ export class BaileysStartupService extends ChannelStartupService {
         this.client?.ws?.close();
         this.client.end(new Error('Close connection'));
 
+
         this.sendDataWebhook(Events.CONNECTION_UPDATE, {
           instance: this.instance.name,
           ...this.stateConnection,
@@ -377,6 +381,7 @@ export class BaileysStartupService extends ChannelStartupService {
         profilePictureUrl: this.instance.profilePictureUrl,
         ...this.stateConnection,
       });
+
     }
 
     if (connection === 'connecting') {
@@ -393,7 +398,7 @@ export class BaileysStartupService extends ChannelStartupService {
         where: {
           instanceId: this.instanceId,
           key: {
-            path: ['id'],
+            path: 'id',
             equals: key.id,
           },
         },
@@ -454,7 +459,12 @@ export class BaileysStartupService extends ChannelStartupService {
     if (number || this.phoneNumber) {
       this.phoneNumber = number;
 
+      // Configuração específica do browser para pairing code (baseado na issue #1761)
+      const browser: WABrowserDescription = ["Ubuntu", "Chrome", "20.0.04"];
+      browserOptions = { browser };
+
       this.logger.info(`Phone number: ${number}`);
+      this.logger.info(`Browser para pairing code: ${browser}`);
     } else {
       const browser: WABrowserDescription = [session.CLIENT, session.NAME, release()];
       browserOptions = { browser };
@@ -527,8 +537,8 @@ export class BaileysStartupService extends ChannelStartupService {
         keys: makeCacheableSignalKeyStore(this.instance.authState.state.keys, P({ level: 'error' }) as any),
       },
       msgRetryCounterCache: this.msgRetryCounterCache,
-      generateHighQualityLinkPreview: true,
-      getMessage: async (key) => (await this.getMessage(key)) as Promise<proto.IMessage>,
+      generateHighQualityLinkPreview: false,
+      getMessage: undefined, // Não buscar mensagens perdidas - economia de memória
       ...browserOptions,
       markOnlineOnConnect: this.localSettings.alwaysOnline,
       retryRequestDelayMs: 350,
@@ -539,11 +549,17 @@ export class BaileysStartupService extends ChannelStartupService {
       qrTimeout: 45_000,
       emitOwnEvents: false,
       shouldIgnoreJid: (jid) => {
+        if (!jid) return true;
+
         const isGroupJid = this.localSettings.groupsIgnore && isJidGroup(jid);
         const isBroadcast = !this.localSettings.readStatus && isJidBroadcast(jid);
         const isNewsletter = isJidNewsletter(jid);
 
-        return isGroupJid || isBroadcast || isNewsletter;
+        // Modo minimalista: ignorar também contatos regulares se não salvamos dados
+        const isContact = jid.endsWith('@s.whatsapp.net');
+        const shouldIgnoreContacts = !this.configService.get<Database>('DATABASE').SAVE_DATA.CONTACTS;
+
+        return isGroupJid || isBroadcast || isNewsletter || (shouldIgnoreContacts && isContact);
       },
       syncFullHistory: this.localSettings.syncFullHistory,
       cachedGroupMetadata: this.getGroupMetadataCache,
@@ -647,7 +663,7 @@ export class BaileysStartupService extends ChannelStartupService {
         if (this.configService.get<Database>('DATABASE').SAVE_DATA.CHATS)
           await this.prismaRepository.chat.createMany({
             data: chatsToInsert,
-            skipDuplicates: true,
+            // skipDuplicates: true,
           });
       }
     },
@@ -694,6 +710,12 @@ export class BaileysStartupService extends ChannelStartupService {
   private readonly contactHandle = {
     'contacts.upsert': async (contacts: Contact[]) => {
       try {
+        // Modo minimalista: não processar contatos se não salvamos dados
+        if (!this.configService.get<Database>('DATABASE').SAVE_DATA.CONTACTS) {
+          this.logger.verbose('Contacts processing disabled - skipping contacts.upsert');
+          return;
+        }
+
         const contactsRaw: any = contacts.map((contact) => ({
           remoteJid: contact.id,
           pushName: contact?.name || contact?.verifiedName || contact.id.split('@')[0],
@@ -707,7 +729,7 @@ export class BaileysStartupService extends ChannelStartupService {
           if (this.configService.get<Database>('DATABASE').SAVE_DATA.CONTACTS)
             await this.prismaRepository.contact.createMany({
               data: contactsRaw,
-              skipDuplicates: true,
+              // skipDuplicates: true,
             });
 
           const usersContacts = contactsRaw.filter((c) => c.remoteJid.includes('@s.whatsapp'));
@@ -835,7 +857,7 @@ export class BaileysStartupService extends ChannelStartupService {
         if (this.configService.get<Database>('DATABASE').SAVE_DATA.HISTORIC) {
           await this.prismaRepository.chat.createMany({
             data: chatsRaw,
-            skipDuplicates: true,
+            // skipDuplicates: true,
           });
         }
 
@@ -858,7 +880,7 @@ export class BaileysStartupService extends ChannelStartupService {
         if (this.configService.get<Database>('DATABASE').SAVE_DATA.HISTORIC) {
           await this.prismaRepository.message.createMany({
             data: messagesRaw,
-            skipDuplicates: true,
+            // skipDuplicates: true,
           });
         }
 
@@ -995,6 +1017,47 @@ export class BaileysStartupService extends ChannelStartupService {
             await this.client.readMessages([received.key]);
           }
 
+          // ==========================================
+          // FILTRO DE SEGURANÇA MÁXIMA - APLICADO ANTES DE QUALQUER PERSISTÊNCIA
+          // ==========================================
+          const messageFilters = await this.getMessageFilters();
+          const filterResult = applyMessageFilter(received, messageFilters, this.instance.name);
+
+          if (!filterResult.allowed) {
+            this.logger.log(`[SECURITY] Message BLOCKED: ${filterResult.reason}`);
+
+            // Se é áudio grande, envia reaction ⛔ ao invés de mensagem de texto
+            if (filterResult.shouldReplyToOversizeAudio && filterResult.remoteJid && received?.key) {
+              try {
+                await this.reactionMessage({
+                  key: received.key,
+                  reaction: '⛔'
+                });
+                this.logger.log(`[SECURITY] Sent ⛔ reaction for oversize audio to ${filterResult.remoteJid}`);
+              } catch (error) {
+                this.logger.error(`[SECURITY] Failed to send oversize audio reaction: ${error.message}`);
+              }
+            }
+
+            // Se é áudio com duração inválida, envia mensagem de texto
+            if (filterResult.shouldReplyToInvalidDuration && filterResult.remoteJid && filterResult.invalidDurationMessage) {
+              try {
+                await this.textMessage({
+                  number: filterResult.remoteJid,
+                  text: filterResult.invalidDurationMessage
+                });
+                this.logger.log(`[SECURITY] Sent invalid duration audio reply to ${filterResult.remoteJid}`);
+              } catch (error) {
+                this.logger.error(`[SECURITY] Failed to send invalid duration audio reply: ${error.message}`);
+              }
+            }
+
+            // DESCARTA COMPLETAMENTE - NÃO SALVA, NÃO PROCESSA, NÃO ENVIA WEBHOOK
+            continue;
+          }
+
+          this.logger.log(`[SECURITY] Message ALLOWED - passed all filters`);
+
           if (this.configService.get<Database>('DATABASE').SAVE_DATA.NEW_MESSAGE) {
             const msg = await this.prismaRepository.message.create({
               data: messageRaw,
@@ -1021,38 +1084,71 @@ export class BaileysStartupService extends ChannelStartupService {
               if (this.configService.get<S3>('S3').ENABLE) {
                 try {
                   const message: any = received;
-                  const media = await this.getBase64FromMediaMessage(
-                    {
-                      message,
-                    },
-                    true,
-                  );
 
-                  const { buffer, mediaType, fileName, size } = media;
-                  const mimetype = mimeTypes.lookup(fileName).toString();
-                  const fullName = join(`${this.instance.id}`, received.key.remoteJid, mediaType, fileName);
-                  await s3Service.uploadFile(fullName, buffer, size.fileLength?.low, {
-                    'Content-Type': mimetype,
-                  });
+                  // S3-only upload for audio messages (no local buffer)
+                  if (received?.message?.audioMessage) {
+                    const audioData = await this.uploadAudioToS3Direct(
+                      received.message.audioMessage,
+                      received.key
+                    );
 
-                  await this.prismaRepository.media.create({
-                    data: {
-                      messageId: msg.id,
-                      instanceId: this.instanceId,
-                      type: mediaType,
-                      fileName: fullName,
-                      mimetype,
-                    },
-                  });
+                    // Store audio metadata in database
+                    await this.prismaRepository.media.create({
+                      data: {
+                        messageId: msg.id,
+                        instanceId: this.instanceId,
+                        type: 'audio',
+                        fileName: audioData.audioUrl.split('/').pop() || 'audio',
+                        mimetype: audioData.mimeType,
+                      },
+                    });
 
-                  const mediaUrl = await s3Service.getObjectUrl(fullName);
+                    // Add audio URL and metadata to message
+                    messageRaw.message.audioUrl = audioData.audioUrl;
+                    messageRaw.message.audioDuration = audioData.audioDuration;
+                    messageRaw.message.mediaUrl = audioData.audioUrl;
 
-                  messageRaw.message.mediaUrl = mediaUrl;
+                    await this.prismaRepository.message.update({
+                      where: { id: msg.id },
+                      data: messageRaw,
+                    });
 
-                  await this.prismaRepository.message.update({
-                    where: { id: msg.id },
-                    data: messageRaw,
-                  });
+                    this.logger.verbose(`Audio processed S3-only: ${audioData.audioUrl} (${audioData.audioDuration}s)`);
+                  } else {
+                    // Traditional upload for non-audio media
+                    const media = await this.getBase64FromMediaMessage(
+                      {
+                        message,
+                      },
+                      true,
+                    );
+
+                    const { buffer, mediaType, fileName, size } = media;
+                    const mimetype = mimeTypes.lookup(fileName).toString();
+                    const fullName = join(`${this.instance.id}`, received.key.remoteJid, mediaType, fileName);
+                    await s3Service.uploadFile(fullName, buffer, size.fileLength?.low, {
+                      'Content-Type': mimetype,
+                    });
+
+                    await this.prismaRepository.media.create({
+                      data: {
+                        messageId: msg.id,
+                        instanceId: this.instanceId,
+                        type: mediaType,
+                        fileName: fullName,
+                        mimetype,
+                      },
+                    });
+
+                    const mediaUrl = await s3Service.getObjectUrl(fullName);
+
+                    messageRaw.message.mediaUrl = mediaUrl;
+
+                    await this.prismaRepository.message.update({
+                      where: { id: msg.id },
+                      data: messageRaw,
+                    });
+                  }
                 } catch (error) {
                   this.logger.error(['Error on upload file to minio', error?.message, error?.stack]);
                 }
@@ -1062,20 +1158,27 @@ export class BaileysStartupService extends ChannelStartupService {
 
           if (this.localWebhook.enabled) {
             if (isMedia && this.localWebhook.webhookBase64) {
-              try {
-                const buffer = await downloadMediaMessage(
-                  { key: received.key, message: received?.message },
-                  'buffer',
-                  {},
-                  {
-                    logger: P({ level: 'error' }) as any,
-                    reuploadRequest: this.client.updateMediaMessage,
-                  },
-                );
+              // S3-only: Skip base64 for audio messages - they already have URL
+              if (received?.message?.audioMessage) {
+                this.logger.verbose('Audio message: using S3 URL instead of base64 for webhook');
+                // Audio URL and metadata already added to messageRaw above
+              } else {
+                // For non-audio media, continue with base64 if requested
+                try {
+                  const buffer = await downloadMediaMessage(
+                    { key: received.key, message: received?.message },
+                    'buffer',
+                    {},
+                    {
+                      logger: P({ level: 'error' }) as any,
+                      reuploadRequest: this.client.updateMediaMessage,
+                    },
+                  );
 
-                messageRaw.message.base64 = buffer ? buffer.toString('base64') : undefined;
-              } catch (error) {
-                this.logger.error(['Error converting media to base64', error?.message]);
+                  messageRaw.message.base64 = buffer ? buffer.toString('base64') : undefined;
+                } catch (error) {
+                  this.logger.error(['Error converting media to base64', error?.message]);
+                }
               }
             }
           }
@@ -1163,7 +1266,7 @@ export class BaileysStartupService extends ChannelStartupService {
             where: {
               instanceId: this.instanceId,
               key: {
-                path: ['id'],
+                path: 'id',
                 equals: key.id,
               },
             },
@@ -1261,10 +1364,20 @@ export class BaileysStartupService extends ChannelStartupService {
 
   private readonly groupHandler = {
     'groups.upsert': (groupMetadata: GroupMetadata[]) => {
+      // Modo minimalista: não processar grupos se ignoramos grupos
+      if (this.localSettings.groupsIgnore) {
+        this.logger.verbose('Groups processing disabled - skipping groups.upsert');
+        return;
+      }
       this.sendDataWebhook(Events.GROUPS_UPSERT, groupMetadata);
     },
 
     'groups.update': (groupMetadataUpdate: Partial<GroupMetadata>[]) => {
+      // Modo minimalista: não processar grupos se ignoramos grupos
+      if (this.localSettings.groupsIgnore) {
+        this.logger.verbose('Groups processing disabled - skipping groups.update');
+        return;
+      }
       this.sendDataWebhook(Events.GROUPS_UPDATE, groupMetadataUpdate);
 
       groupMetadataUpdate.forEach((group) => {
@@ -1891,42 +2004,70 @@ export class BaileysStartupService extends ChannelStartupService {
         if (isMedia && this.configService.get<S3>('S3').ENABLE) {
           try {
             const message: any = messageRaw;
-            const media = await this.getBase64FromMediaMessage(
-              {
-                message,
-              },
-              true,
-            );
 
-            const { buffer, mediaType, fileName, size } = media;
+            // S3-only upload for audio messages (no local buffer)
+            if (messageRaw?.message?.audioMessage) {
+              const audioData = await this.uploadAudioToS3Direct(
+                messageRaw.message.audioMessage,
+                messageRaw.key
+              );
 
-            const mimetype = mimeTypes.lookup(fileName).toString();
+              // Store audio metadata in database
+              await this.prismaRepository.media.create({
+                data: {
+                  messageId: msg.id,
+                  instanceId: this.instanceId,
+                  type: 'audio',
+                  fileName: audioData.audioUrl.split('/').pop() || 'audio',
+                  mimetype: audioData.mimeType,
+                },
+              });
 
-            const fullName = join(
-              `${this.instance.id}`,
-              messageRaw.key.remoteJid,
-              `${messageRaw.key.id}`,
-              mediaType,
-              fileName,
-            );
+              // Add audio URL and metadata to message
+              messageRaw.message.audioUrl = audioData.audioUrl;
+              messageRaw.message.audioDuration = audioData.audioDuration;
+              messageRaw.message.mediaUrl = audioData.audioUrl;
 
-            await s3Service.uploadFile(fullName, buffer, size.fileLength?.low, {
-              'Content-Type': mimetype,
-            });
+              this.logger.verbose(`Sent audio processed S3-only: ${audioData.audioUrl} (${audioData.audioDuration}s)`);
+            } else {
+              // Traditional upload for non-audio media
+              const media = await this.getBase64FromMediaMessage(
+                {
+                  message,
+                },
+                true,
+              );
 
-            await this.prismaRepository.media.create({
-              data: {
-                messageId: msg.id,
-                instanceId: this.instanceId,
-                type: mediaType,
-                fileName: fullName,
-                mimetype,
-              },
-            });
+              const { buffer, mediaType, fileName, size } = media;
 
-            const mediaUrl = await s3Service.getObjectUrl(fullName);
+              const mimetype = mimeTypes.lookup(fileName).toString();
 
-            messageRaw.message.mediaUrl = mediaUrl;
+              const fullName = join(
+                `${this.instance.id}`,
+                messageRaw.key.remoteJid,
+                `${messageRaw.key.id}`,
+                mediaType,
+                fileName,
+              );
+
+              await s3Service.uploadFile(fullName, buffer, size.fileLength?.low, {
+                'Content-Type': mimetype,
+              });
+
+              await this.prismaRepository.media.create({
+                data: {
+                  messageId: msg.id,
+                  instanceId: this.instanceId,
+                  type: mediaType,
+                  fileName: fullName,
+                  mimetype,
+                },
+              });
+
+              const mediaUrl = await s3Service.getObjectUrl(fullName);
+
+              messageRaw.message.mediaUrl = mediaUrl;
+            }
 
             await this.prismaRepository.message.update({
               where: { id: msg.id },
@@ -1940,20 +2081,27 @@ export class BaileysStartupService extends ChannelStartupService {
 
       if (this.localWebhook.enabled) {
         if (isMedia && this.localWebhook.webhookBase64) {
-          try {
-            const buffer = await downloadMediaMessage(
-              { key: messageRaw.key, message: messageRaw?.message },
-              'buffer',
-              {},
-              {
-                logger: P({ level: 'error' }) as any,
-                reuploadRequest: this.client.updateMediaMessage,
-              },
-            );
+          // S3-only: Skip base64 for audio messages - they already have URL
+          if (messageRaw?.message?.audioMessage) {
+            this.logger.verbose('Sent audio message: using S3 URL instead of base64 for webhook');
+            // Audio URL and metadata already added to messageRaw above
+          } else {
+            // For non-audio media, continue with base64 if requested
+            try {
+              const buffer = await downloadMediaMessage(
+                { key: messageRaw.key, message: messageRaw?.message },
+                'buffer',
+                {},
+                {
+                  logger: P({ level: 'error' }) as any,
+                  reuploadRequest: this.client.updateMediaMessage,
+                },
+              );
 
-            messageRaw.message.base64 = buffer ? buffer.toString('base64') : undefined;
-          } catch (error) {
-            this.logger.error(['Error converting media to base64', error?.message]);
+              messageRaw.message.base64 = buffer ? buffer.toString('base64') : undefined;
+            } catch (error) {
+              this.logger.error(['Error converting media to base64', error?.message]);
+            }
           }
         }
       }
@@ -3025,6 +3173,51 @@ export class BaileysStartupService extends ChannelStartupService {
     }
   }
 
+
+  /**
+   * Upload audio directly to S3 without local storage
+   * Returns the public URL of the uploaded audio
+   */
+  private async uploadAudioToS3Direct(audioMessage: any, messageKey: any): Promise<{audioUrl: string, audioDuration: number, mimeType: string}> {
+    try {
+      // Get audio metadata
+      const duration = audioMessage.seconds || 0;
+      const mimeType = audioMessage.mimetype || 'audio/ogg';
+
+      // Generate file name with audio metadata
+      const ext = mimeType.split('/')[1] || 'ogg';
+      const fileName = `audio_${Date.now()}_${messageKey.id}.${ext}`;
+      const fullName = join(`${this.instance.id}`, messageKey.remoteJid, 'audio', fileName);
+
+      // Download content as stream (no local buffer)
+      const stream = await downloadContentFromMessage(audioMessage, 'audio');
+
+      // Get file size from audioMessage
+      const fileSize = audioMessage.fileLength?.low || audioMessage.fileLength || 0;
+
+      // Upload directly to S3/MinIO using stream
+      await s3Service.uploadFile(fullName, stream, fileSize, {
+        'Content-Type': mimeType,
+      });
+
+      // Get public URL with configurable expiry
+      const audioUrlExpiry = this.configService.get<S3>('S3').AUDIO_URL_EXPIRY;
+      const audioUrl = await s3Service.getObjectUrl(fullName, audioUrlExpiry);
+
+      this.logger.verbose(`Audio uploaded to S3: ${fullName} (${duration}s)`);
+
+      return {
+        audioUrl,
+        audioDuration: duration,
+        mimeType
+      };
+
+    } catch (error) {
+      this.logger.error(['Error uploading audio to S3', error?.message, error?.stack]);
+      throw error;
+    }
+  }
+
   public async getBase64FromMediaMessage(data: getBase64FromMediaMessageDto, getBuffer = false) {
     try {
       const m = data?.message;
@@ -3365,6 +3558,69 @@ export class BaileysStartupService extends ChannelStartupService {
     } catch (error) {
       this.logger.error(error);
       return null;
+    }
+  }
+
+  private async getMessageFilters(): Promise<MessageTypeFilter> {
+    try {
+      // Obtém configurações de filtro do webhook (principal)
+      const webhookConfig = this.localWebhook;
+      const filters: MessageTypeFilter = {};
+
+      if (webhookConfig && webhookConfig.enabled) {
+        // Filtros de tipo de mensagem
+        if (webhookConfig.messageTypes && Array.isArray(webhookConfig.messageTypes) && webhookConfig.messageTypes.length) {
+          filters.messageTypes = webhookConfig.messageTypes as string[];
+        }
+        if (webhookConfig.excludeMessageTypes && Array.isArray(webhookConfig.excludeMessageTypes) && webhookConfig.excludeMessageTypes.length) {
+          filters.excludeMessageTypes = webhookConfig.excludeMessageTypes as string[];
+        }
+
+        // Filtros de texto
+        if (webhookConfig.textFilters && typeof webhookConfig.textFilters === 'object') {
+          filters.textFilters = webhookConfig.textFilters as any;
+        }
+
+        // Processamento de áudio
+        if (webhookConfig.audioProcessing && typeof webhookConfig.audioProcessing === 'object') {
+          filters.audioProcessing = webhookConfig.audioProcessing as any;
+        }
+      }
+
+      // Busca configurações de filtro de duração por instância
+      try {
+        const audioFilter = await this.prismaRepository.instanceAudioFilter.findUnique({
+          where: { instanceName: this.instance.name }
+        });
+
+        if (audioFilter && audioFilter.enabled) {
+          filters.audioDurationFilter = {
+            enabled: true,
+            minDurationSeconds: audioFilter.minDurationSeconds,
+            maxDurationSeconds: audioFilter.maxDurationSeconds,
+            replyToInvalidDuration: false, // Não envia resposta para limites da instância
+            oversizeDurationMessage: `Áudio muito longo. Máximo: ${audioFilter.maxDurationSeconds} segundos`
+          };
+          this.logger.log(`[SECURITY] Using instance-specific audio duration filter: ${audioFilter.minDurationSeconds}-${audioFilter.maxDurationSeconds}s`);
+        }
+      } catch (dbError) {
+        this.logger.error(`[SECURITY] Error fetching audio duration filter: ${dbError.message}`);
+      }
+
+      // Se tem filtros configurados, usa eles
+      if (Object.keys(filters).length > 0) {
+        this.logger.log(`[SECURITY] Using configured filters for instance ${this.instance.name}`);
+        return filters;
+      }
+
+      // Fallback para configuração padrão
+      this.logger.log(`[SECURITY] Using default filters for instance ${this.instance.name}`);
+      return defaultMessageFilter;
+
+    } catch (error) {
+      this.logger.error(`[SECURITY] Error getting message filters: ${error.message}`);
+      // Em caso de erro, usa configuração padrão para segurança
+      return defaultMessageFilter;
     }
   }
 
@@ -3741,8 +3997,8 @@ export class BaileysStartupService extends ChannelStartupService {
     const result = await this.prismaRepository.message.updateMany({
       where: {
         AND: [
-          { key: { path: ['remoteJid'], equals: remoteJid } },
-          { key: { path: ['fromMe'], equals: false } },
+          { key: { path: 'remoteJid', equals: remoteJid } },
+          { key: { path: 'fromMe', equals: false } },
           { messageTimestamp: { lte: timestamp } },
           {
             OR: [{ status: null }, { status: status[3] }],
@@ -3769,8 +4025,8 @@ export class BaileysStartupService extends ChannelStartupService {
       this.prismaRepository.message.count({
         where: {
           AND: [
-            { key: { path: ['remoteJid'], equals: remoteJid } },
-            { key: { path: ['fromMe'], equals: false } },
+            { key: { path: 'remoteJid', equals: remoteJid } },
+            { key: { path: 'fromMe', equals: false } },
             { status: { equals: status[3] } },
           ],
         },

@@ -29,14 +29,6 @@ export class InstanceDto extends IntegrationDto {
   proxyProtocol?: string;
   proxyUsername?: string;
   proxyPassword?: string;
-  webhook?: {
-    enabled?: boolean;
-    events?: string[];
-    headers?: JsonValue;
-    url?: string;
-    byEvents?: boolean;
-    base64?: boolean;
-  };
   chatwootAccountId?: string;
   chatwootConversationPending?: boolean;
   chatwootAutoCreate?: boolean;
@@ -51,6 +43,14 @@ export class InstanceDto extends IntegrationDto {
   chatwootSignMsg?: boolean;
   chatwootToken?: string;
   chatwootUrl?: string;
+  // audio filters
+  audioFilters?: {
+    enabled?: boolean;
+    minDurationSeconds?: number;
+    maxDurationSeconds?: number;
+    replyToOversizeAudio?: boolean;
+    oversizeReaction?: string;
+  };
 }
 
 export class SetPresenceDto {
